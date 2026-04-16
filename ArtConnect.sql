@@ -7,6 +7,8 @@
 -- 0. Suppression des tables si elles existent
 -- =========================================================
 
+USE ArtConnect;
+
 DROP TABLE IF EXISTS artwork_tag_map;
 DROP TABLE IF EXISTS exhibition_artworks;
 DROP TABLE IF EXISTS member_favorite_disciplines;
