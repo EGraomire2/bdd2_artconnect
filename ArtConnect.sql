@@ -43,10 +43,7 @@ CREATE TABLE artists (
     updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_artist_name UNIQUE (name),
-    CONSTRAINT uq_artist_email UNIQUE (contact_email),
-    CONSTRAINT chk_artist_birth_year CHECK (
-        birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
-    )
+    CONSTRAINT uq_artist_email UNIQUE (contact_email)
 ) ;
 
 CREATE TABLE disciplines (
@@ -67,10 +64,7 @@ CREATE TABLE community_members (
     created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT uq_member_email UNIQUE (email),
-    CONSTRAINT chk_member_birth_year CHECK (
-        birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
-    )
+    CONSTRAINT uq_member_email UNIQUE (email)
 ) ;
 
 CREATE TABLE galleries (
@@ -116,10 +110,7 @@ CREATE TABLE artworks (
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
 
-    CONSTRAINT chk_artwork_price CHECK (price >= 0),
-    CONSTRAINT chk_artwork_creation_year CHECK (
-        creation_year IS NULL OR creation_year BETWEEN 1000 AND YEAR(CURDATE())
-    )
+    CONSTRAINT chk_artwork_price CHECK (price >= 0)
 ) ;
 
 CREATE TABLE exhibitions (
@@ -138,11 +129,7 @@ CREATE TABLE exhibitions (
         FOREIGN KEY (gallery_id)
         REFERENCES galleries(gallery_id)
         ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-
-    CONSTRAINT chk_exhibition_dates CHECK (
-        start_date IS NULL OR end_date IS NULL OR start_date <= end_date
-    )
+        ON UPDATE CASCADE
 ) ;
 
 CREATE TABLE workshops (
@@ -163,11 +150,7 @@ CREATE TABLE workshops (
         FOREIGN KEY (instructor_id)
         REFERENCES artists(artist_id)
         ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-
-    CONSTRAINT chk_workshop_duration CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_workshop_capacity CHECK (max_participants >= 0),
-    CONSTRAINT chk_workshop_price CHECK (price >= 0)
+        ON UPDATE CASCADE
 ) ;
 
 CREATE TABLE bookings (
@@ -212,8 +195,7 @@ CREATE TABLE reviews (
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT uq_review_member_artwork UNIQUE (reviewer_id, artwork_id),
-    CONSTRAINT chk_review_rating CHECK (rating BETWEEN 1 AND 5)
+    CONSTRAINT uq_review_member_artwork UNIQUE (reviewer_id, artwork_id)
 ) ;
 
 -- =========================================================
@@ -297,7 +279,34 @@ CREATE TABLE artwork_tag_map (
 ) ;
 
 -- =========================================================
--- 3. Index utiles
+-- 3. Contraintes de CHECK
+-- =========================================================
+
+/*
+CONSTRAINT chk_artist_birth_year CHECK (
+	birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
+)
+
+CONSTRAINT chk_member_birth_year CHECK (
+	birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
+)
+CONSTRAINT chk_exhibition_dates CHECK (
+	start_date IS NULL OR end_date IS NULL OR start_date <= end_date
+)
+
+CONSTRAINT chk_review_rating CHECK (rating BETWEEN 1 AND 5)
+
+CONSTRAINT chk_workshop_duration CHECK (duration_minutes >= 0),
+CONSTRAINT chk_workshop_capacity CHECK (max_participants >= 0),
+CONSTRAINT chk_workshop_price CHECK (price >= 0)
+
+CONSTRAINT chk_artwork_creation_year CHECK (
+	creation_year IS NULL OR creation_year BETWEEN 1000 AND YEAR(CURDATE())
+)
+*/
+
+-- =========================================================
+-- 4. Index utiles
 -- =========================================================
 
 CREATE INDEX idx_artists_city ON artists(city);
@@ -311,3 +320,7 @@ CREATE INDEX idx_workshops_instructor ON workshops(instructor_id);
 CREATE INDEX idx_bookings_payment_status ON bookings(payment_status);
 CREATE INDEX idx_reviews_artwork ON reviews(artwork_id);
 CREATE INDEX idx_reviews_reviewer ON reviews(reviewer_id);
+
+-- =========================================================
+-- 5. Vues utiles
+-- =========================================================
