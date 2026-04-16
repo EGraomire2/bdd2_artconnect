@@ -279,31 +279,198 @@ CREATE TABLE artwork_tag_map (
 ) ;
 
 -- =========================================================
--- 3. Contraintes de CHECK
+-- 3. Trigger : Contraintes check
 -- =========================================================
 
-/*
-CONSTRAINT chk_artist_birth_year CHECK (
-	birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
-)
+-- ---------------------------------------------------------
+-- ARTISTS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_artist_birth_year_insert;
+DELIMITER //
+CREATE TRIGGER chk_artist_birth_year_insert
+BEFORE INSERT ON artists
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.birth_year IS NULL OR NEW.birth_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Date de naissance invalide - l'année de naissance doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
 
-CONSTRAINT chk_member_birth_year CHECK (
-	birth_year IS NULL OR birth_year BETWEEN 1000 AND YEAR(CURDATE())
-)
-CONSTRAINT chk_exhibition_dates CHECK (
-	start_date IS NULL OR end_date IS NULL OR start_date <= end_date
-)
+DROP TRIGGER IF EXISTS chk_artist_birth_year_update;
+DELIMITER //
+CREATE TRIGGER chk_artist_birth_year_update
+BEFORE UPDATE ON artists
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.birth_year IS NULL OR NEW.birth_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Date de naissance invalide - l'année de naissance doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
 
-CONSTRAINT chk_review_rating CHECK (rating BETWEEN 1 AND 5)
+-- ---------------------------------------------------------
+-- COMMUNITY MEMBERS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_member_birth_year_insert;
+DELIMITER //
+CREATE TRIGGER chk_member_birth_year_insert
+BEFORE INSERT ON community_members
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.birth_year IS NULL OR NEW.birth_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Date de naissance invalide - l'année de naissance doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
 
-CONSTRAINT chk_workshop_duration CHECK (duration_minutes >= 0),
-CONSTRAINT chk_workshop_capacity CHECK (max_participants >= 0),
-CONSTRAINT chk_workshop_price CHECK (price >= 0)
+DROP TRIGGER IF EXISTS chk_member_birth_year_update;
+DELIMITER //
+CREATE TRIGGER chk_member_birth_year_update
+BEFORE UPDATE ON community_members
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.birth_year IS NULL OR NEW.birth_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Date de naissance invalide - l'année de naissance doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
 
-CONSTRAINT chk_artwork_creation_year CHECK (
-	creation_year IS NULL OR creation_year BETWEEN 1000 AND YEAR(CURDATE())
-)
-*/
+-- ---------------------------------------------------------
+-- EXHIBITIONS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_exhibition_dates_insert;
+DELIMITER //
+CREATE TRIGGER chk_exhibition_dates_insert
+BEFORE INSERT ON exhibitions
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.start_date IS NULL OR NEW.end_date IS NULL OR NEW.start_date <= NEW.end_date) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Dates invalides - la date de début doit être antérieure à la date de fin"; 
+    END IF;
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS chk_exhibition_dates_update;
+DELIMITER //
+CREATE TRIGGER chk_exhibition_dates_update
+BEFORE UPDATE ON exhibitions
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.start_date IS NULL OR NEW.end_date IS NULL OR NEW.start_date <= NEW.end_date) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Dates invalides - la date de début doit être antérieure à la date de fin"; 
+    END IF;
+END //
+DELIMITER ;
+
+-- ---------------------------------------------------------
+-- REVIEWS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_review_rating_insert;
+DELIMITER //
+CREATE TRIGGER chk_review_rating_insert
+BEFORE INSERT ON reviews
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.rating BETWEEN 1 AND 5) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Note invalide - la note doit être comprise entre 1 et 5"; 
+    END IF;
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS chk_review_rating_update;
+DELIMITER //
+CREATE TRIGGER chk_review_rating_update
+BEFORE UPDATE ON reviews
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.rating BETWEEN 1 AND 5) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Note invalide - la note doit être comprise entre 1 et 5"; 
+    END IF;
+END //
+DELIMITER ;
+
+-- ---------------------------------------------------------
+-- WORKSHOPS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_workshop_insert;
+DELIMITER //
+CREATE TRIGGER chk_workshop_insert
+BEFORE INSERT ON workshops
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.duration_minutes >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Durée invalide - la durée du workshop doit être supérieure ou égale à 0"; 
+    END IF;
+    IF NOT (NEW.max_participants >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Nombre de participants invalide - le nombre de participants maximum doit être supérieur ou égal à 0";
+    END IF;
+    IF NOT (NEW.price >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Prix invalide - le prix doit être supérieur ou égal à 0";
+    END IF;
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS chk_workshop_update;
+DELIMITER //
+CREATE TRIGGER chk_workshop_update
+BEFORE UPDATE ON workshops
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.duration_minutes >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Durée invalide - la durée du workshop doit être supérieure ou égale à 0"; 
+    END IF;
+    IF NOT (NEW.max_participants >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Nombre de participants invalide - le nombre de participants maximum doit être supérieur ou égal à 0";
+    END IF;
+    IF NOT (NEW.price >= 0) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Prix invalide - le prix doit être supérieur ou égal à 0";
+    END IF;
+END //
+DELIMITER ;
+
+-- ---------------------------------------------------------
+-- ARTWORKS
+-- ---------------------------------------------------------
+DROP TRIGGER IF EXISTS chk_artwork_creation_year_insert;
+DELIMITER //
+CREATE TRIGGER chk_artwork_creation_year_insert
+BEFORE INSERT ON artworks
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.creation_year IS NULL OR NEW.creation_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Année de création invalide - l'année doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS chk_artwork_creation_year_update;
+DELIMITER //
+CREATE TRIGGER chk_artwork_creation_year_update
+BEFORE UPDATE ON artworks
+FOR EACH ROW
+BEGIN 
+    IF NOT (NEW.creation_year IS NULL OR NEW.creation_year BETWEEN 1000 AND YEAR(CURDATE())) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Année de création invalide - l'année doit être comprise entre l'an 1000 et cette année"; 
+    END IF;
+END //
+DELIMITER ;
 
 -- =========================================================
 -- 4. Index utiles
@@ -324,3 +491,8 @@ CREATE INDEX idx_reviews_reviewer ON reviews(reviewer_id);
 -- =========================================================
 -- 5. Vues utiles
 -- =========================================================
+
+-- =========================================================
+-- 5. Trigger utiles
+-- =========================================================
+
