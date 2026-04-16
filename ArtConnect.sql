@@ -596,3 +596,99 @@ FROM artworks aw
 JOIN artwork_tag_map atm ON aw.artwork_id = atm.artwork_id
 JOIN artwork_tags t ON atm.tag_id = t.tag_id;
 
+-- =========================================================
+-- 6. Procédures et fonctions stockées
+-- =========================================================
+
+DELIMITER //
+CREATE PROCEDURE sp_create_exhibition_with_artwork(
+    IN p_title VARCHAR(200),
+    IN p_start_date DATE,
+    IN p_end_date DATE,
+    IN p_gallery_id INT,
+    IN p_artwork_id INT
+)
+BEGIN
+    DECLARE v_exhibition_id INT;
+
+    -- 1. Insertion de l'exposition
+    INSERT INTO exhibitions (title, start_date, end_date, gallery_id)
+    VALUES (p_title, p_start_date, p_end_date, p_gallery_id);
+
+    -- 2. Récupération de l'ID généré
+    SET v_exhibition_id = LAST_INSERT_ID();
+
+    -- 3. Liaison avec l'œuvre d'art spécifiée
+    INSERT INTO exhibition_artworks (exhibition_id, artwork_id)
+    VALUES (v_exhibition_id, p_artwork_id);
+    
+    SELECT v_exhibition_id AS new_exhibition_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE FUNCTION fn_count_workshop_participants(p_workshop_id INT) 
+RETURNS INT
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_count INT;
+    
+    SELECT COUNT(*) INTO v_count
+    FROM bookings
+    WHERE workshop_id = p_workshop_id 
+      AND payment_status = 'PAID'; -- On ne compte que ceux qui ont payé
+      
+    RETURN v_count;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE sp_book_workshop(
+    IN p_member_id INT,
+    IN p_workshop_id INT
+)
+BEGIN
+    DECLARE v_max INT;
+    DECLARE v_current INT;
+
+    -- 1. Récupérer la capacité max
+    SELECT max_participants INTO v_max 
+    FROM workshops 
+    WHERE workshop_id = p_workshop_id;
+
+    -- 2. Récupérer le nombre actuel de réservations
+    SET v_current = fn_count_workshop_participants(p_workshop_id);
+
+    -- 3. Vérification de la disponibilité
+    IF v_current < v_max THEN
+        INSERT INTO bookings (member_id, workshop_id, booking_date, payment_status)
+        VALUES (p_member_id, p_workshop_id, NOW(), 'PENDING');
+        SELECT 'Réservation effectuée avec succès' AS message;
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Désolé, ce workshop est complet.';
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE FUNCTION fn_artist_total_sales(p_artist_id INT) 
+RETURNS DECIMAL(15,2)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_total_sales DECIMAL(15,2);
+    
+    -- On somme le prix des œuvres dont le statut est 'SOLD'
+    SELECT SUM(price) INTO v_total_sales
+    FROM artworks
+    WHERE artist_id = p_artist_id 
+      AND status = 'SOLD';
+      
+    -- Si l'artiste n'a rien vendu, on retourne 0 au lieu de NULL
+    RETURN COALESCE(v_total_sales, 0.00);
+END //
+DELIMITER ;
+
+
