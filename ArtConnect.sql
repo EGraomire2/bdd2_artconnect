@@ -492,7 +492,107 @@ CREATE INDEX idx_reviews_reviewer ON reviews(reviewer_id);
 -- 5. Vues utiles
 -- =========================================================
 
--- =========================================================
--- 6. Trigger utiles
--- =========================================================
+CREATE VIEW v_artists_public AS
+SELECT 
+    artist_id,
+    name,
+    bio,
+    birth_year,
+    city,
+    website,
+    social_media
+FROM artists;
+
+CREATE VIEW v_members_anonymized AS
+SELECT 
+    member_id,
+    name,
+    CONCAT(LEFT(email, 3), '***@***') AS email_masked,
+    birth_year,
+    city,
+    membership_type
+FROM community_members;
+
+CREATE VIEW v_artworks_with_artist AS
+SELECT 
+    a.artwork_id,
+    a.title,
+    a.creation_year,
+    a.type,
+    a.price,
+    a.status,
+    ar.name AS artist_name,
+    ar.city AS artist_city
+FROM artworks a
+JOIN artists ar ON a.artist_id = ar.artist_id;
+
+CREATE VIEW v_exhibited_artworks AS
+SELECT 
+    aw.artwork_id,
+    aw.title,
+    ex.title AS exhibition_title,
+    ex.start_date,
+    ex.end_date,
+    g.name AS gallery_name
+FROM artworks aw
+JOIN exhibition_artworks ea ON aw.artwork_id = ea.artwork_id
+JOIN exhibitions ex ON ea.exhibition_id = ex.exhibition_id
+JOIN galleries g ON ex.gallery_id = g.gallery_id;
+
+CREATE VIEW v_artwork_ratings AS
+SELECT 
+    artwork_id,
+    AVG(rating) AS avg_rating,
+    COUNT(*) AS review_count
+FROM reviews
+GROUP BY artwork_id;
+
+CREATE VIEW v_artist_disciplines AS
+SELECT 
+    ar.artist_id,
+    ar.name AS artist_name,
+    d.name AS discipline_name
+FROM artists ar
+JOIN artist_disciplines ad ON ar.artist_id = ad.artist_id
+JOIN disciplines d ON ad.discipline_id = d.discipline_id;
+
+CREATE VIEW v_workshop_participants AS
+SELECT 
+    w.workshop_id,
+    w.title,
+    w.workshop_date,
+    COUNT(b.member_id) AS total_participants,
+    w.max_participants
+FROM workshops w
+LEFT JOIN bookings b ON w.workshop_id = b.workshop_id
+GROUP BY w.workshop_id;
+
+CREATE VIEW v_workshop_revenue AS
+SELECT 
+    w.workshop_id,
+    w.title,
+    w.price,
+    COUNT(b.booking_id) AS participants,
+    (w.price * COUNT(b.booking_id)) AS total_revenue
+FROM workshops w
+JOIN bookings b ON w.workshop_id = b.workshop_id
+WHERE b.payment_status = 'PAID'
+GROUP BY w.workshop_id;
+
+CREATE VIEW v_top_galleries AS
+SELECT 
+    gallery_id,
+    name,
+    rating
+FROM galleries
+WHERE rating >= 4.0;
+
+CREATE VIEW v_artworks_tags AS
+SELECT 
+    aw.artwork_id,
+    aw.title,
+    t.name AS tag
+FROM artworks aw
+JOIN artwork_tag_map atm ON aw.artwork_id = atm.artwork_id
+JOIN artwork_tags t ON atm.tag_id = t.tag_id;
 
