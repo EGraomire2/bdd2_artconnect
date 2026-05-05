@@ -27,7 +27,7 @@ public class Artwork {
 
     public Artwork(String title, Integer creationYear, String type, double price, Artist artist) {
         this.title = title;
-        this.title = creationYear;
+        this.creationYear = creationYear;
         this.type = type;
         this.price = price;
         this.artist = artist;
