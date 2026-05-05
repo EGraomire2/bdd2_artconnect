@@ -22,6 +22,7 @@ public class JdbcArtworkDao implements ArtworkDao {
      */
     private Artwork mapResultSetToArtwork(ResultSet rs) throws SQLException {
         Artwork artwork = new Artwork();
+        artwork.setId(rs.getInt("artwork_id"));
         artwork.setTitle(rs.getString("title"));
         artwork.setCreationYear(rs.getObject("creation_year") != null ? rs.getInt("creation_year") : null);
         artwork.setType(rs.getString("type"));
@@ -29,7 +30,11 @@ public class JdbcArtworkDao implements ArtworkDao {
         artwork.setDimensions(rs.getString("dimensions"));
         artwork.setDescription(rs.getString("description"));
         artwork.setPrice(rs.getDouble("price"));
-        artwork.setStatus(Artwork.Status.valueOf(rs.getString("status")));
+        
+        String statusStr = rs.getString("status");
+        if (statusStr != null) {
+            artwork.setStatus(Artwork.Status.valueOf(statusStr));
+        }
         
         // Load artist
         Artist artist = new Artist();
@@ -37,6 +42,22 @@ public class JdbcArtworkDao implements ArtworkDao {
         artwork.setArtist(artist);
         
         return artwork;
+    }
+
+    /**
+     * Retrieve artist ID by artist name from database.
+     */
+    private Integer getArtistIdByName(Connection conn, String artistName) throws SQLException {
+        String sql = "SELECT artist_id FROM artists WHERE name = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, artistName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("artist_id");
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -77,7 +98,7 @@ public class JdbcArtworkDao implements ArtworkDao {
             stmt.setString(5, artwork.getDimensions());
             stmt.setString(6, artwork.getDescription());
             stmt.setDouble(7, artwork.getPrice());
-            stmt.setString(8, artwork.getStatus().name());
+            stmt.setString(8, artwork.getStatus() != null ? artwork.getStatus().toString() : "FOR_SALE");
             stmt.setString(9, artwork.getArtist().getName());
             
             int affectedRows = stmt.executeUpdate();
