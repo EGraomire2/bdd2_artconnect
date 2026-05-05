@@ -73,4 +73,22 @@ public class JdbcGalleryDao implements GalleryDao {
         
         return galleries;
     }
+
+    @Override
+    public Optional<Gallery> findByName(String name) {
+        String sql = "SELECT * FROM galleries WHERE name = ?";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToGallery(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching gallery by name: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 }

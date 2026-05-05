@@ -7,8 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,5 +76,23 @@ public class JdbcWorkshopDao implements WorkshopDao {
         }
         
         return workshops;
+    }
+
+    @Override
+    public Optional<Workshop> findByTitle(String title) {
+        String sql = "SELECT * FROM workshops WHERE title = ?";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, title);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToWorkshop(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching workshop by title: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }
