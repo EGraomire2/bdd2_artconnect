@@ -1,2 +1,5 @@
 # ignorer les fichier compilé java
 *.class
+
+# Dossier build a ignorer
+target/
