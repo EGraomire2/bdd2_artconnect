@@ -7,11 +7,11 @@ import java.util.List;
 public interface ArtworkTagDao {
     List<ArtworkTag> findAll();
 
-    ArtworkTag save(ArtworkTag tag);
+    ArtworkTag save(ArtworkTag tag) throws SQLException;
     
-    ArtworkTag update(ArtworkTag tag);
+    ArtworkTag update(ArtworkTag tag) throws SQLException;
     
-    void delete(int tagId);
+    void delete(int tagId) throws SQLException;
     
     ArtworkTag findByName(String name);
     

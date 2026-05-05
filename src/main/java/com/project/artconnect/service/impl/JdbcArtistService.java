@@ -4,6 +4,7 @@ import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.persistence.JdbcArtistDao;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,12 @@ public class JdbcArtistService implements ArtistService {
 
     @Override
     public void deleteArtist(int artistId) {
-        artistDao.delete(artistId);
+        try {
+            artistDao.delete(artistId);
+        } catch (SQLException e) {
+            System.err.println("Error deleting artist: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override

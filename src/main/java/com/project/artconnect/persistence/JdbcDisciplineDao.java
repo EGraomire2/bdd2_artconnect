@@ -28,7 +28,7 @@ public class JdbcDisciplineDao implements DisciplineDao {
     }
     
     @Override
-    public Discipline save(Discipline discipline) {
+    public Discipline save(Discipline discipline) throws SQLException {
         String sql = "INSERT INTO disciplines (name) VALUES (?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -47,7 +47,7 @@ public class JdbcDisciplineDao implements DisciplineDao {
     }
     
     @Override
-    public Discipline update(Discipline discipline) {
+    public Discipline update(Discipline discipline) throws SQLException {
         String sql = "UPDATE disciplines SET name = ? WHERE discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -61,7 +61,7 @@ public class JdbcDisciplineDao implements DisciplineDao {
     }
     
     @Override
-    public void delete(int disciplineId) {
+    public void delete(int disciplineId) throws SQLException {
         String sql = "DELETE FROM disciplines WHERE discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();

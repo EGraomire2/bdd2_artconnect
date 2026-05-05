@@ -1,5 +1,6 @@
 package com.project.artconnect.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +15,5 @@ public interface CommunityMemberDao {
 
     void update(CommunityMember member);
 
-    void delete(int memberId);
+    void delete(int memberId) throws SQLException;
 }

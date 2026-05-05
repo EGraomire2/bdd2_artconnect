@@ -28,7 +28,7 @@ public class JdbcBookingDao implements BookingDao {
     }
     
     @Override
-    public Booking save(Booking booking) {
+    public Booking save(Booking booking) throws SQLException {
         // Vérifier si la réservation existe déjà (UNIQUE constraint)
         if (existsBooking(booking.getWorkshopId(), booking.getMemberId())) {
             throw new SQLException("Cette réservation existe déjà pour ce workshop et ce membre");
@@ -76,7 +76,7 @@ public class JdbcBookingDao implements BookingDao {
     }
     
     @Override
-    public void delete(int bookingId) {
+    public void delete(int bookingId) throws SQLException {
         String sql = "DELETE FROM bookings WHERE booking_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();

@@ -144,7 +144,7 @@ public class JdbcArtworkDao implements ArtworkDao {
     }
 
     @Override
-    public void delete(int artworkId) {
+    public void delete(int artworkId) throws SQLException {
         String sql = "DELETE FROM artworks WHERE artwork_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();

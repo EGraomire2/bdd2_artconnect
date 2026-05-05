@@ -193,7 +193,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
      * Delete a workshop from the database.
      */
     @Override
-    public void delete(int workshopId) {
+    public void delete(int workshopId) throws SQLException {
         String sql = "DELETE FROM workshops WHERE workshop_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();

@@ -12,7 +12,7 @@ public interface ArtworkDao {
 
     void update(Artwork artwork);
 
-    void delete(int artworkId);
+    void delete(int artworkId) throws SQLException;
 
     List<Artwork> findByArtistName(String artistName);
 }

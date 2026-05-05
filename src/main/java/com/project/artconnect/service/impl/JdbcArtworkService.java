@@ -4,6 +4,7 @@ import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Artwork;
 import com.project.artconnect.service.ArtworkService;
 import com.project.artconnect.persistence.JdbcArtworkDao;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -48,6 +49,11 @@ public class JdbcArtworkService implements ArtworkService {
 
     @Override
     public void deleteArtwork(int artworkId) {
-        artworkDao.delete(artworkId);
+        try {
+            artworkDao.delete(artworkId);
+        } catch (SQLException e) {
+            System.err.println("Error deleting artwork: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
