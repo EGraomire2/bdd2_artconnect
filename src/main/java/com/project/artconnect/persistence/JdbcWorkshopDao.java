@@ -93,7 +93,6 @@ public class JdbcWorkshopDao implements WorkshopDao {
         return workshops;
     }
 
-<<<<<<< HEAD
     @Override
     public Optional<Workshop> findByTitle(String title) {
         String sql = "SELECT * FROM workshops WHERE title = ?";
@@ -110,103 +109,5 @@ public class JdbcWorkshopDao implements WorkshopDao {
             e.printStackTrace();
         }
         return Optional.empty();
-=======
-    /**
-     * Save a workshop to the database with proper foreign key handling.
-     */
-    public void save(Workshop workshop) {
-        String sql = "INSERT INTO workshops (title, workshop_date, duration_minutes, max_participants, price, instructor_id, location, description, level) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, workshop.getTitle());
-            stmt.setTimestamp(2, workshop.getDate() != null ? Timestamp.valueOf(workshop.getDate()) : null);
-            stmt.setInt(3, workshop.getDurationMinutes());
-            stmt.setInt(4, workshop.getMaxParticipants());
-            stmt.setDouble(5, workshop.getPrice());
-            
-            // Get instructor (artist) ID - either from object or search by name
-            Integer instructorId = null;
-            if (workshop.getInstructor() != null) {
-                if (workshop.getInstructor().getId() != null) {
-                    instructorId = workshop.getInstructor().getId();
-                } else if (workshop.getInstructor().getName() != null) {
-                    instructorId = getArtistIdByName(conn, workshop.getInstructor().getName());
-                }
-            }
-            
-            if (instructorId != null) {
-                stmt.setInt(6, instructorId);
-            } else {
-                throw new SQLException("Instructor artist not found - cannot insert workshop without valid instructor_id");
-            }
-            
-            stmt.setString(7, workshop.getLocation());
-            stmt.setString(8, workshop.getDescription());
-            stmt.setString(9, workshop.getLevel());
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Workshop saved successfully: " + workshop.getTitle());
-            }
-        } catch (SQLException e) {
-            System.err.println("Error saving workshop: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Update a workshop in the database.
-     */
-    public void update(Workshop workshop) {
-        String sql = "UPDATE workshops SET workshop_date = ?, duration_minutes = ?, max_participants = ?, price = ?, location = ?, description = ?, level = ? "
-                   + "WHERE workshop_id = ?";
-        
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setTimestamp(1, workshop.getDate() != null ? Timestamp.valueOf(workshop.getDate()) : null);
-            stmt.setInt(2, workshop.getDurationMinutes());
-            stmt.setInt(3, workshop.getMaxParticipants());
-            stmt.setDouble(4, workshop.getPrice());
-            stmt.setString(5, workshop.getLocation());
-            stmt.setString(6, workshop.getDescription());
-            stmt.setString(7, workshop.getLevel());
-            stmt.setInt(8, workshop.getId());
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Workshop updated successfully: " + workshop.getTitle());
-            }
-        } catch (SQLException e) {
-            System.err.println("Error updating workshop: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Delete a workshop from the database.
-     */
-    public void delete(Integer workshopId) {
-        String sql = "DELETE FROM workshops WHERE workshop_id = ?";
-        
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, workshopId);
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Workshop deleted successfully");
-            } else {
-                System.out.println("No workshop found with id: " + workshopId);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting workshop: " + e.getMessage());
-            e.printStackTrace();
-        }
->>>>>>> 9ee9b6b48768473fa02f35b3fbf3d728da5e6191
     }
 }
