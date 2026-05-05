@@ -2,6 +2,7 @@ package com.project.artconnect.dao;
 
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Discipline;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -21,4 +22,12 @@ public interface ArtistDao {
     List<Artist> findByName(String name);
 
     List<Discipline> getAllDisciplines();
+
+    List<Discipline> getArtistDisciplines(int artistId);
+
+    void addDisciplineToArtist(int artistId, int disciplineId) throws SQLException;
+
+    void removeDisciplineFromArtist(int artistId, int disciplineId) throws SQLException;
+
+    boolean artistHasDiscipline(int artistId, int disciplineId);
 }

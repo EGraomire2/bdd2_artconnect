@@ -211,4 +211,84 @@ public class JdbcArtistDao implements ArtistDao {
         
         return disciplines;
     }
+
+    @Override
+    public List<Discipline> getArtistDisciplines(int artistId) {
+        List<Discipline> disciplines = new ArrayList<>();
+        String sql = "SELECT d.* FROM disciplines d " +
+                     "JOIN artist_disciplines ad ON d.discipline_id = ad.discipline_id " +
+                     "WHERE ad.artist_id = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, artistId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Discipline discipline = new Discipline();
+                    discipline.setId(rs.getInt("discipline_id"));
+                    discipline.setName(rs.getString("name"));
+                    disciplines.add(discipline);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching artist disciplines: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return disciplines;
+    }
+
+    @Override
+    public void addDisciplineToArtist(int artistId, int disciplineId) throws SQLException {
+        // Check if association already exists
+        if (artistHasDiscipline(artistId, disciplineId)) {
+            throw new SQLException("Cet artiste a déjà cette discipline");
+        }
+        
+        String sql = "INSERT INTO artist_disciplines (artist_id, discipline_id) VALUES (?, ?)";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, artistId);
+            stmt.setInt(2, disciplineId);
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void removeDisciplineFromArtist(int artistId, int disciplineId) throws SQLException {
+        String sql = "DELETE FROM artist_disciplines WHERE artist_id = ? AND discipline_id = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, artistId);
+            stmt.setInt(2, disciplineId);
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public boolean artistHasDiscipline(int artistId, int disciplineId) {
+        String sql = "SELECT COUNT(*) FROM artist_disciplines WHERE artist_id = ? AND discipline_id = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, artistId);
+            stmt.setInt(2, disciplineId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking artist discipline: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
