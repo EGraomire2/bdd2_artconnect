@@ -8,5 +8,9 @@ public interface WorkshopDao {
     Optional<Workshop> findById(Long id);
     Optional<Workshop> findByTitle(String title);
 
+    void save(Workshop workshop);
+    void update(Workshop workshop);
+    void delete(Long id);
+    
     List<Workshop> findAll();
 }
