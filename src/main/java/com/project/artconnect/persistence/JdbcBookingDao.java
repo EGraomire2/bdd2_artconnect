@@ -1,10 +1,16 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.BookingDao;
 import com.project.artconnect.model.Booking;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcBookingDao implements BookingDao {
     
@@ -28,12 +34,7 @@ public class JdbcBookingDao implements BookingDao {
     }
     
     @Override
-    public Booking save(Booking booking) throws SQLException {
-        // Vérifier si la réservation existe déjà (UNIQUE constraint)
-        if (existsBooking(booking.getWorkshopId(), booking.getMemberId())) {
-            throw new SQLException("Cette réservation existe déjà pour ce workshop et ce membre");
-        }
-        
+    public Booking save(Booking booking) {
         String sql = "INSERT INTO bookings (workshop_id, member_id, booking_date, payment_status) " +
                      "VALUES (?, ?, ?, ?)";
         
@@ -52,12 +53,15 @@ public class JdbcBookingDao implements BookingDao {
                     booking.setId(generatedKeys.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error saving booking: " + e.getMessage());
+            e.printStackTrace();
         }
         return booking;
     }
     
     @Override
-    public Booking update(Booking booking) throws SQLException {
+    public Booking update(Booking booking) {
         String sql = "UPDATE bookings SET workshop_id = ?, member_id = ?, booking_date = ?, payment_status = ? " +
                      "WHERE booking_id = ?";
         
@@ -71,12 +75,15 @@ public class JdbcBookingDao implements BookingDao {
             stmt.setInt(5, booking.getId());
             
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating booking: " + e.getMessage());
+            e.printStackTrace();
         }
         return booking;
     }
     
     @Override
-    public void delete(int bookingId) throws SQLException {
+    public void delete(int bookingId) {
         String sql = "DELETE FROM bookings WHERE booking_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -84,6 +91,9 @@ public class JdbcBookingDao implements BookingDao {
             
             stmt.setInt(1, bookingId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting booking: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

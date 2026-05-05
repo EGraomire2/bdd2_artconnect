@@ -1,10 +1,16 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.ReviewDao;
 import com.project.artconnect.model.Review;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcReviewDao implements ReviewDao {
     
@@ -28,12 +34,7 @@ public class JdbcReviewDao implements ReviewDao {
     }
     
     @Override
-    public Review save(Review review) throws SQLException {
-        // Check if review already exists (UNIQUE constraint on reviewer_id, artwork_id)
-        if (reviewExists(review.getReviewerId(), review.getArtworkId())) {
-            throw new SQLException("Ce membre a déjà écrit une review pour cette artwork");
-        }
-        
+    public Review save(Review review) {
         String sql = "INSERT INTO reviews (reviewer_id, artwork_id, rating, comment, review_date) " +
                      "VALUES (?, ?, ?, ?, ?)";
         
@@ -53,12 +54,15 @@ public class JdbcReviewDao implements ReviewDao {
                     review.setId(generatedKeys.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error saving review: " + e.getMessage());
+            e.printStackTrace();
         }
         return review;
     }
     
     @Override
-    public Review update(Review review) throws SQLException {
+    public Review update(Review review) {
         String sql = "UPDATE reviews SET reviewer_id = ?, artwork_id = ?, rating = ?, comment = ?, review_date = ? " +
                      "WHERE review_id = ?";
         
@@ -73,12 +77,15 @@ public class JdbcReviewDao implements ReviewDao {
             stmt.setInt(6, review.getId());
             
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating review: " + e.getMessage());
+            e.printStackTrace();
         }
         return review;
     }
     
     @Override
-    public void delete(int reviewId) throws SQLException {
+    public void delete(int reviewId) {
         String sql = "DELETE FROM reviews WHERE review_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -86,6 +93,9 @@ public class JdbcReviewDao implements ReviewDao {
             
             stmt.setInt(1, reviewId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting review: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -142,24 +152,5 @@ public class JdbcReviewDao implements ReviewDao {
         return review;
     }
 
-    private boolean reviewExists(int reviewerId, int artworkId) {
-        String sql = "SELECT COUNT(*) FROM reviews WHERE reviewer_id = ? AND artwork_id = ?";
-        
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, reviewerId);
-            stmt.setInt(2, artworkId);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error checking review existence: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
+    // reviewExists() removed - let DB handle UNIQUE constraint
 }

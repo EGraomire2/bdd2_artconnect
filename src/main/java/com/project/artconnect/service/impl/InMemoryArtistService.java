@@ -1,18 +1,23 @@
 package com.project.artconnect.service.impl;
 
-import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
-import com.project.artconnect.service.ArtistService;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-// Import de JdbcArtistDao pour la connection à la base de données
+import com.project.artconnect.model.Artist;
+import com.project.artconnect.model.Discipline;
 import com.project.artconnect.persistence.JdbcArtistDao;
+import com.project.artconnect.persistence.JdbcDisciplineDao;
+import com.project.artconnect.service.ArtistService;
 
 public class InMemoryArtistService implements ArtistService {
     private final Map<String, Artist> artists = new LinkedHashMap<>();
     private final Map<String, Discipline> disciplines = new LinkedHashMap<>();
     private JdbcArtistDao jdbcArtistDao = new JdbcArtistDao();
+    private JdbcDisciplineDao jdbcDisciplineDao = new JdbcDisciplineDao();
 
     public InMemoryArtistService() {
         initData();
@@ -40,7 +45,9 @@ public class InMemoryArtistService implements ArtistService {
     }
 
     private void addDiscipline(String name) {
-        disciplines.put(name, new Discipline(name));
+        Discipline d = new Discipline();
+        d.setName(name);
+        jdbcDisciplineDao.save(d); // Sauvegarde de la discipline dans la base de données
     }
 
     private void addArtist(String name, String bio, int year, String email, String city, String... disciplineNames) {
@@ -91,12 +98,7 @@ public class InMemoryArtistService implements ArtistService {
         }
         
         // Delete from database
-        try {
-            jdbcArtistDao.delete(artistId);
-        } catch (SQLException e) {
-            System.err.println("Error deleting artist: " + e.getMessage());
-            e.printStackTrace();
-        }
+        jdbcArtistDao.delete(artistId);
     }
 
     @Override

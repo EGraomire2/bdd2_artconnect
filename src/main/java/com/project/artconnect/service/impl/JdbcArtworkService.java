@@ -1,11 +1,13 @@
 package com.project.artconnect.service.impl;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Artwork;
-import com.project.artconnect.service.ArtworkService;
 import com.project.artconnect.persistence.JdbcArtworkDao;
-import java.sql.SQLException;
-import java.util.*;
+import com.project.artconnect.service.ArtworkService;
 
 /**
  * Artwork Service implementation using JDBC DAO for database access.
@@ -49,11 +51,6 @@ public class JdbcArtworkService implements ArtworkService {
 
     @Override
     public void deleteArtwork(int artworkId) {
-        try {
-            artworkDao.delete(artworkId);
-        } catch (SQLException e) {
-            System.err.println("Error deleting artwork: " + e.getMessage());
-            e.printStackTrace();
-        }
+        artworkDao.delete(artworkId);
     }
 }

@@ -1,10 +1,16 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.ArtworkTagDao;
 import com.project.artconnect.model.ArtworkTag;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcArtworkTagDao implements ArtworkTagDao {
     
@@ -28,7 +34,7 @@ public class JdbcArtworkTagDao implements ArtworkTagDao {
     }
     
     @Override
-    public ArtworkTag save(ArtworkTag tag) throws SQLException {
+    public ArtworkTag save(ArtworkTag tag) {
         String sql = "INSERT INTO artwork_tags (name) VALUES (?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -42,12 +48,15 @@ public class JdbcArtworkTagDao implements ArtworkTagDao {
                     tag.setId(generatedKeys.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error saving artwork tag: " + e.getMessage());
+            e.printStackTrace();
         }
         return tag;
     }
     
     @Override
-    public ArtworkTag update(ArtworkTag tag) throws SQLException {
+    public ArtworkTag update(ArtworkTag tag) {
         String sql = "UPDATE artwork_tags SET name = ? WHERE tag_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -56,12 +65,15 @@ public class JdbcArtworkTagDao implements ArtworkTagDao {
             stmt.setString(1, tag.getName());
             stmt.setInt(2, tag.getId());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating artwork tag: " + e.getMessage());
+            e.printStackTrace();
         }
         return tag;
     }
     
     @Override
-    public void delete(int tagId) throws SQLException {
+    public void delete(int tagId) {
         String sql = "DELETE FROM artwork_tags WHERE tag_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -69,6 +81,9 @@ public class JdbcArtworkTagDao implements ArtworkTagDao {
             
             stmt.setInt(1, tagId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting artwork tag: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

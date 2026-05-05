@@ -1,10 +1,16 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.DisciplineDao;
 import com.project.artconnect.model.Discipline;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcDisciplineDao implements DisciplineDao {
     
@@ -28,7 +34,7 @@ public class JdbcDisciplineDao implements DisciplineDao {
     }
     
     @Override
-    public Discipline save(Discipline discipline) throws SQLException {
+    public Discipline save(Discipline discipline) {
         String sql = "INSERT INTO disciplines (name) VALUES (?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -42,12 +48,15 @@ public class JdbcDisciplineDao implements DisciplineDao {
                     discipline.setId(generatedKeys.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error saving discipline: " + e.getMessage());
+            e.printStackTrace();
         }
         return discipline;
     }
     
     @Override
-    public Discipline update(Discipline discipline) throws SQLException {
+    public Discipline update(Discipline discipline) {
         String sql = "UPDATE disciplines SET name = ? WHERE discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -56,12 +65,15 @@ public class JdbcDisciplineDao implements DisciplineDao {
             stmt.setString(1, discipline.getName());
             stmt.setInt(2, discipline.getId());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating discipline: " + e.getMessage());
+            e.printStackTrace();
         }
         return discipline;
     }
     
     @Override
-    public void delete(int disciplineId) throws SQLException {
+    public void delete(int disciplineId) {
         String sql = "DELETE FROM disciplines WHERE discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -69,6 +81,9 @@ public class JdbcDisciplineDao implements DisciplineDao {
             
             stmt.setInt(1, disciplineId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting discipline: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

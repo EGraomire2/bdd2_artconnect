@@ -1,18 +1,19 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.MemberFavoriteDisciplineDao;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcMemberFavoriteDisciplineDao implements MemberFavoriteDisciplineDao {
     
     @Override
-    public void addFavoriteDiscipline(int memberId, int disciplineId) throws SQLException {
-        if (exists(memberId, disciplineId)) {
-            throw new SQLException("Cette discipline favorite existe déjà pour ce membre");
-        }
-        
+    public void addFavoriteDiscipline(int memberId, int disciplineId) {
         String sql = "INSERT INTO member_favorite_disciplines (member_id, discipline_id) VALUES (?, ?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -21,11 +22,14 @@ public class JdbcMemberFavoriteDisciplineDao implements MemberFavoriteDiscipline
             stmt.setInt(1, memberId);
             stmt.setInt(2, disciplineId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error adding favorite discipline: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     @Override
-    public void removeFavoriteDiscipline(int memberId, int disciplineId) throws SQLException {
+    public void removeFavoriteDiscipline(int memberId, int disciplineId) {
         String sql = "DELETE FROM member_favorite_disciplines WHERE member_id = ? AND discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -34,6 +38,9 @@ public class JdbcMemberFavoriteDisciplineDao implements MemberFavoriteDiscipline
             stmt.setInt(1, memberId);
             stmt.setInt(2, disciplineId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error removing favorite discipline: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

@@ -140,12 +140,15 @@ public class JdbcGalleryDao implements GalleryDao {
     }
 
     @Override
-    public void delete(int galleryId) throws SQLException {
+    public void delete(int galleryId) {
         String sql = "DELETE FROM galleries WHERE gallery_id = ?";
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, galleryId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting gallery: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

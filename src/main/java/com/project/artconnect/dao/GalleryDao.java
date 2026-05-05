@@ -1,6 +1,5 @@
 package com.project.artconnect.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +16,5 @@ public interface GalleryDao {
 
     void update(Gallery gallery);
 
-    void delete(int galleryId) throws SQLException;
+    void delete(int galleryId);
 }

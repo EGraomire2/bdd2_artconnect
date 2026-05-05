@@ -1,18 +1,19 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.ArtworkTagMapDao;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcArtworkTagMapDao implements ArtworkTagMapDao {
     
     @Override
-    public void addTagToArtwork(int artworkId, int tagId) throws SQLException {
-        if (exists(artworkId, tagId)) {
-            throw new SQLException("Cette association artwork-tag existe déjà");
-        }
-        
+    public void addTagToArtwork(int artworkId, int tagId) {
         String sql = "INSERT INTO artwork_tag_map (artwork_id, tag_id) VALUES (?, ?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -21,11 +22,14 @@ public class JdbcArtworkTagMapDao implements ArtworkTagMapDao {
             stmt.setInt(1, artworkId);
             stmt.setInt(2, tagId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error adding tag to artwork: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     @Override
-    public void removeTagFromArtwork(int artworkId, int tagId) throws SQLException {
+    public void removeTagFromArtwork(int artworkId, int tagId) {
         String sql = "DELETE FROM artwork_tag_map WHERE artwork_id = ? AND tag_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -34,6 +38,9 @@ public class JdbcArtworkTagMapDao implements ArtworkTagMapDao {
             stmt.setInt(1, artworkId);
             stmt.setInt(2, tagId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error removing tag from artwork: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

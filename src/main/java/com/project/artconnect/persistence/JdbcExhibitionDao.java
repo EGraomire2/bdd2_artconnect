@@ -138,7 +138,7 @@ public class JdbcExhibitionDao implements ExhibitionDao {
     }
 
     @Override
-    public void delete(int exhibitionId) throws SQLException {
+    public void delete(int exhibitionId) {
         String sql = "DELETE FROM exhibitions WHERE exhibition_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -146,6 +146,9 @@ public class JdbcExhibitionDao implements ExhibitionDao {
             
             stmt.setInt(1, exhibitionId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting exhibition: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

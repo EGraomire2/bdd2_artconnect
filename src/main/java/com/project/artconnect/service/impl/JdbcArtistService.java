@@ -1,12 +1,13 @@
 package com.project.artconnect.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Discipline;
-import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.persistence.JdbcArtistDao;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.project.artconnect.service.ArtistService;
 
 /**
  * Artist Service implementation using JDBC DAO for database access.
@@ -42,12 +43,7 @@ public class JdbcArtistService implements ArtistService {
 
     @Override
     public void deleteArtist(int artistId) {
-        try {
-            artistDao.delete(artistId);
-        } catch (SQLException e) {
-            System.err.println("Error deleting artist: " + e.getMessage());
-            e.printStackTrace();
-        }
+        artistDao.delete(artistId);
     }
 
     @Override
@@ -62,6 +58,8 @@ public class JdbcArtistService implements ArtistService {
         return artists.stream()
                 .filter(a -> query == null || a.getName().toLowerCase().contains(query.toLowerCase()))
                 .filter(a -> city == null || city.isEmpty() || a.getCity().equalsIgnoreCase(city))
+                .filter(a -> disciplineName == null || a.getDisciplines().stream()
+                        .anyMatch(d -> d.getName().equals(disciplineName)))
                 .collect(Collectors.toList());
     }
 }

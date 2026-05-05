@@ -1,18 +1,19 @@
 package com.project.artconnect.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.ExhibitionArtworkDao;
 import com.project.artconnect.util.ConnectionManager;
-import java.sql.*;
-import java.util.*;
 
 public class JdbcExhibitionArtworkDao implements ExhibitionArtworkDao {
     
     @Override
-    public void addArtworkToExhibition(int exhibitionId, int artworkId) throws SQLException {
-        if (exists(exhibitionId, artworkId)) {
-            throw new SQLException("Cette association existe déjà");
-        }
-        
+    public void addArtworkToExhibition(int exhibitionId, int artworkId) {
         String sql = "INSERT INTO exhibition_artworks (exhibition_id, artwork_id) VALUES (?, ?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -21,11 +22,14 @@ public class JdbcExhibitionArtworkDao implements ExhibitionArtworkDao {
             stmt.setInt(1, exhibitionId);
             stmt.setInt(2, artworkId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error adding artwork to exhibition: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     @Override
-    public void removeArtworkFromExhibition(int exhibitionId, int artworkId) throws SQLException {
+    public void removeArtworkFromExhibition(int exhibitionId, int artworkId) {
         String sql = "DELETE FROM exhibition_artworks WHERE exhibition_id = ? AND artwork_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -34,6 +38,9 @@ public class JdbcExhibitionArtworkDao implements ExhibitionArtworkDao {
             stmt.setInt(1, exhibitionId);
             stmt.setInt(2, artworkId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error removing artwork from exhibition: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

@@ -114,7 +114,7 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void delete(int artistId) throws SQLException {
+    public void delete(int artistId) {
         String sql = "DELETE FROM artists WHERE artist_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -122,6 +122,9 @@ public class JdbcArtistDao implements ArtistDao {
             
             stmt.setInt(1, artistId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting artist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -222,12 +225,7 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void addDisciplineToArtist(int artistId, int disciplineId) throws SQLException {
-        // Check if association already exists
-        if (artistHasDiscipline(artistId, disciplineId)) {
-            throw new SQLException("Cet artiste a déjà cette discipline");
-        }
-        
+    public void addDisciplineToArtist(int artistId, int disciplineId) {
         String sql = "INSERT INTO artist_disciplines (artist_id, discipline_id) VALUES (?, ?)";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -236,11 +234,14 @@ public class JdbcArtistDao implements ArtistDao {
             stmt.setInt(1, artistId);
             stmt.setInt(2, disciplineId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error adding discipline to artist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void removeDisciplineFromArtist(int artistId, int disciplineId) throws SQLException {
+    public void removeDisciplineFromArtist(int artistId, int disciplineId) {
         String sql = "DELETE FROM artist_disciplines WHERE artist_id = ? AND discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -249,6 +250,9 @@ public class JdbcArtistDao implements ArtistDao {
             stmt.setInt(1, artistId);
             stmt.setInt(2, disciplineId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error removing discipline from artist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

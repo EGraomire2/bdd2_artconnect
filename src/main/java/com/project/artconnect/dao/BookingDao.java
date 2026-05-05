@@ -1,14 +1,14 @@
 package com.project.artconnect.dao;
 
-import com.project.artconnect.model.Booking;
-import java.sql.SQLException;
 import java.util.List;
+
+import com.project.artconnect.model.Booking;
 
 public interface BookingDao {
     List<Booking> findAll();
-    Booking save(Booking booking) throws SQLException;
-    Booking update(Booking booking) throws SQLException;
-    void delete(int bookingId) throws SQLException;
+    Booking save(Booking booking);
+    Booking update(Booking booking);
+    void delete(int bookingId);
     List<Booking> findByWorkshopId(int workshopId);
     List<Booking> findByMemberId(int memberId);
     boolean existsBooking(int workshopId, int memberId);

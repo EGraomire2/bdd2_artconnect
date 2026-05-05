@@ -1,20 +1,26 @@
 package com.project.artconnect.service.impl;
 
-import com.project.artconnect.model.Workshop;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.project.artconnect.model.Booking;
 import com.project.artconnect.model.CommunityMember;
-import com.project.artconnect.service.WorkshopService;
+import com.project.artconnect.model.Workshop;
+import com.project.artconnect.persistence.JdbcBookingDao;
 import com.project.artconnect.persistence.JdbcWorkshopDao;
-import java.util.*;
+import com.project.artconnect.service.WorkshopService;
 
 /**
  * Workshop Service implementation using JDBC DAO for database access.
  */
 public class JdbcWorkshopService implements WorkshopService {
     private final JdbcWorkshopDao workshopDao;
+    private final JdbcBookingDao bookingDao;
 
-    public JdbcWorkshopService(JdbcWorkshopDao workshopDao) {
+    public JdbcWorkshopService(JdbcWorkshopDao workshopDao, JdbcBookingDao bookingDao) {
         this.workshopDao = workshopDao;
+        this.bookingDao = bookingDao;
     }
 
     @Override
@@ -35,14 +41,15 @@ public class JdbcWorkshopService implements WorkshopService {
             return;
         }
         Booking b = new Booking(workshop, member);
+        bookingDao.save(b);
         member.addBooking(b);
     }
 
     @Override
     public List<Booking> getBookingsByMember(CommunityMember member) {
-        if (member == null || member.getBookings() == null) {
+        if (member == null || member.getId() == null) {
             return Collections.emptyList();
         }
-        return member.getBookings();
+        return bookingDao.findByMemberId(member.getId());
     }
 }
