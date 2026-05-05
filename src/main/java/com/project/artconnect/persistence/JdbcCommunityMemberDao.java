@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JDBC implementation for CommunityMemberDao.
@@ -127,5 +128,23 @@ public class JdbcCommunityMemberDao implements CommunityMemberDao {
             System.err.println("Error deleting community member: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Optional<CommunityMember> findByName(String name) {
+        String sql = "SELECT * FROM community_members WHERE name = ?";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToCommunityMember(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching community member by name: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }
