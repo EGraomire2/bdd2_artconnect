@@ -6,9 +6,13 @@ import com.project.artconnect.service.ArtistService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// Import de JdbcArtistDao pour la connection à la base de données
+import com.project.artconnect.persistence.JdbcArtistDao;
+
 public class InMemoryArtistService implements ArtistService {
     private final Map<String, Artist> artists = new LinkedHashMap<>();
     private final Map<String, Discipline> disciplines = new LinkedHashMap<>();
+    private JdbcArtistDao jdbcArtistDao = new JdbcArtistDao();
 
     public InMemoryArtistService() {
         initData();
@@ -47,21 +51,23 @@ public class InMemoryArtistService implements ArtistService {
             }
         }
         artists.put(name, a);
+        jdbcArtistDao.save(a); // Sauvegarde de l'artiste dans la base de données
     }
 
     @Override
     public List<Artist> getAllArtists() {
-        return new ArrayList<>(artists.values());
+        return jdbcArtistDao.findAll(); // Récupération de tous les artistes depuis la base de données
     }
 
     @Override
     public Optional<Artist> getArtistByName(String name) {
-        return Optional.ofNullable(artists.get(name));
+        return jdbcArtistDao.findByName(name).stream().findFirst(); // Récupération de l'artiste par nom depuis la base de données
     }
 
     @Override
     public void createArtist(Artist artist) {
         artists.put(artist.getName(), artist);
+        jdbcArtistDao.save(artist); // Sauvegarde de l'artiste dans la base de données
     }
 
     @Override

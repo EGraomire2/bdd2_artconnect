@@ -154,4 +154,27 @@ public class JdbcArtistDao implements ArtistDao {
         
         return artists;
     }
+
+    @Override
+    public List<Artist> findByName(String name) {
+        List<Artist> artists = new ArrayList<>();
+        String sql = "SELECT * FROM artists WHERE name = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, name);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    artists.add(mapResultSetToArtist(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching artists by name: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return artists;
+    }
 }
