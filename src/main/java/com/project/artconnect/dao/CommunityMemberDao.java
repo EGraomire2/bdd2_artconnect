@@ -1,8 +1,10 @@
 package com.project.artconnect.dao;
 
-import com.project.artconnect.model.CommunityMember;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.model.CommunityMember;
 
 public interface CommunityMemberDao {
     Optional<CommunityMember> findByName(String name);
@@ -13,5 +15,5 @@ public interface CommunityMemberDao {
 
     void update(CommunityMember member);
 
-    void delete(String name);
+    void delete(int memberId) throws SQLException;
 }

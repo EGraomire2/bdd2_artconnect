@@ -1,17 +1,16 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.ExhibitionDao;
-import com.project.artconnect.model.Exhibition;
-import com.project.artconnect.model.Gallery;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.project.artconnect.dao.ExhibitionDao;
+import com.project.artconnect.model.Exhibition;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for ExhibitionDao.
@@ -139,23 +138,14 @@ public class JdbcExhibitionDao implements ExhibitionDao {
     }
 
     @Override
-    public void delete(String title) {
-        String sql = "DELETE FROM exhibitions WHERE title = ?";
+    public void delete(int exhibitionId) throws SQLException {
+        String sql = "DELETE FROM exhibitions WHERE exhibition_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, title);
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Exhibition deleted successfully: " + title);
-            } else {
-                System.out.println("No exhibition found with title: " + title);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting exhibition: " + e.getMessage());
-            e.printStackTrace();
+            stmt.setInt(1, exhibitionId);
+            stmt.executeUpdate();
         }
     }
 }

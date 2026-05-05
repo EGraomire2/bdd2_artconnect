@@ -1,16 +1,17 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.ArtworkDao;
-import com.project.artconnect.model.Artwork;
-import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.ArtworkTag;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.project.artconnect.dao.ArtworkDao;
+import com.project.artconnect.model.Artist;
+import com.project.artconnect.model.Artwork;
+import com.project.artconnect.model.ArtworkTag;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for ArtworkDao.
@@ -143,26 +144,14 @@ public class JdbcArtworkDao implements ArtworkDao {
     }
 
     @Override
-    public void delete(String title) {
-        // First delete tags
-        deleteArtworkTags(title);
-        
-        String sql = "DELETE FROM artworks WHERE title = ?";
+    public void delete(int artworkId) throws SQLException {
+        String sql = "DELETE FROM artworks WHERE artwork_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, title);
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Artwork deleted successfully: " + title);
-            } else {
-                System.out.println("No artwork found with title: " + title);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting artwork: " + e.getMessage());
-            e.printStackTrace();
+            stmt.setInt(1, artworkId);
+            stmt.executeUpdate();
         }
     }
 

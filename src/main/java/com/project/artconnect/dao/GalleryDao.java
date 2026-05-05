@@ -1,16 +1,21 @@
 package com.project.artconnect.dao;
 
-import com.project.artconnect.model.Gallery;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.model.Gallery;
+
 
 public interface GalleryDao {
     Optional<Gallery> findById(Long id);
     Optional<Gallery> findByName(String name);
 
-    void save(Gallery gallery);
-    void update(Gallery gallery);
-    void delete(Long id);  
-    
     List<Gallery> findAll();
+
+    void save(Gallery gallery);
+
+    void update(Gallery gallery);
+
+    void delete(int galleryId) throws SQLException;
 }

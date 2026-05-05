@@ -1,8 +1,5 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.CommunityMemberDao;
-import com.project.artconnect.model.CommunityMember;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.dao.CommunityMemberDao;
+import com.project.artconnect.model.CommunityMember;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for CommunityMemberDao.
@@ -111,23 +112,14 @@ public class JdbcCommunityMemberDao implements CommunityMemberDao {
     }
 
     @Override
-    public void delete(String name) {
-        String sql = "DELETE FROM community_members WHERE name = ?";
+    public void delete(int memberId) throws SQLException {
+        String sql = "DELETE FROM community_members WHERE member_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, name);
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Community member deleted successfully: " + name);
-            } else {
-                System.out.println("No community member found with name: " + name);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting community member: " + e.getMessage());
-            e.printStackTrace();
+            stmt.setInt(1, memberId);
+            stmt.executeUpdate();
         }
     }
 

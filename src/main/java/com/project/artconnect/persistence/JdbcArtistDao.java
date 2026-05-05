@@ -114,23 +114,14 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void delete(String artistName) {
-        String sql = "DELETE FROM artists WHERE name = ?";
+    public void delete(int artistId) throws SQLException {
+        String sql = "DELETE FROM artists WHERE artist_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, artistName);
-            
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Artist deleted successfully: " + artistName);
-            } else {
-                System.out.println("No artist found with name: " + artistName);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting artist: " + e.getMessage());
-            e.printStackTrace();
+            stmt.setInt(1, artistId);
+            stmt.executeUpdate();
         }
     }
 

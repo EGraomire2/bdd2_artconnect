@@ -1,8 +1,5 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.GalleryDao;
-import com.project.artconnect.model.Gallery;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.dao.GalleryDao;
+import com.project.artconnect.model.Gallery;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for GalleryDao.
@@ -139,15 +140,12 @@ public class JdbcGalleryDao implements GalleryDao {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(int galleryId) throws SQLException {
         String sql = "DELETE FROM galleries WHERE gallery_id = ?";
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
+            stmt.setInt(1, galleryId);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error deleting gallery: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
