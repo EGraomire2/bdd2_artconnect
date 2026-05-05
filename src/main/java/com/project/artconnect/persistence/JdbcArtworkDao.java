@@ -22,6 +22,7 @@ public class JdbcArtworkDao implements ArtworkDao {
      */
     private Artwork mapResultSetToArtwork(ResultSet rs) throws SQLException {
         Artwork artwork = new Artwork();
+        artwork.setId(rs.getInt("artwork_id"));
         artwork.setTitle(rs.getString("title"));
         artwork.setCreationYear(rs.getObject("creation_year") != null ? rs.getInt("creation_year") : null);
         artwork.setType(rs.getString("type"));
@@ -35,9 +36,23 @@ public class JdbcArtworkDao implements ArtworkDao {
             artwork.setStatus(Artwork.Status.valueOf(statusStr));
         }
         
-        // Note: artist_id is in result set but would need ArtistDao to load full Artist object
-        
         return artwork;
+    }
+
+    /**
+     * Retrieve artist ID by artist name from database.
+     */
+    private Integer getArtistIdByName(Connection conn, String artistName) throws SQLException {
+        String sql = "SELECT artist_id FROM artists WHERE name = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, artistName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("artist_id");
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -81,11 +96,20 @@ public class JdbcArtworkDao implements ArtworkDao {
             stmt.setDouble(7, artwork.getPrice());
             stmt.setString(8, artwork.getStatus() != null ? artwork.getStatus().toString() : "FOR_SALE");
             
-            // Note: This is simplified - you'd need to get artist_id from the Artist object
+            // Get artist ID - either from object or search by name
+            Integer artistId = null;
             if (artwork.getArtist() != null) {
-                stmt.setNull(9, java.sql.Types.INTEGER);
+                if (artwork.getArtist().getId() != null) {
+                    artistId = artwork.getArtist().getId();
+                } else if (artwork.getArtist().getName() != null) {
+                    artistId = getArtistIdByName(conn, artwork.getArtist().getName());
+                }
+            }
+            
+            if (artistId != null) {
+                stmt.setInt(9, artistId);
             } else {
-                stmt.setNull(9, java.sql.Types.INTEGER);
+                throw new SQLException("Artist not found - cannot insert artwork without valid artist_id");
             }
             
             int affectedRows = stmt.executeUpdate();

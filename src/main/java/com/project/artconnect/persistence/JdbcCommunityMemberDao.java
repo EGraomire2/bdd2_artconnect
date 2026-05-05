@@ -22,6 +22,7 @@ public class JdbcCommunityMemberDao implements CommunityMemberDao {
      */
     private CommunityMember mapResultSetToCommunityMember(ResultSet rs) throws SQLException {
         CommunityMember member = new CommunityMember();
+        member.setId(rs.getInt("member_id"));
         member.setName(rs.getString("name"));
         member.setEmail(rs.getString("email"));
         member.setBirthYear(rs.getObject("birth_year") != null ? rs.getInt("birth_year") : null);

@@ -24,6 +24,7 @@ public class JdbcExhibitionDao implements ExhibitionDao {
      */
     private Exhibition mapResultSetToExhibition(ResultSet rs) throws SQLException {
         Exhibition exhibition = new Exhibition();
+        exhibition.setId(rs.getInt("exhibition_id"));
         exhibition.setTitle(rs.getString("title"));
         exhibition.setStartDate(rs.getObject("start_date") != null ? rs.getDate("start_date").toLocalDate() : null);
         exhibition.setEndDate(rs.getObject("end_date") != null ? rs.getDate("end_date").toLocalDate() : null);
@@ -31,10 +32,23 @@ public class JdbcExhibitionDao implements ExhibitionDao {
         exhibition.setCuratorName(rs.getString("curator_name"));
         exhibition.setTheme(rs.getString("theme"));
         
-        // Note: gallery_id is in the result set but we'd need GalleryDao to load the full Gallery object
-        // For now, just note the gallery_id could be retrieved if needed
-        
         return exhibition;
+    }
+
+    /**
+     * Retrieve gallery ID by gallery name from database.
+     */
+    private Integer getGalleryIdByName(Connection conn, String galleryName) throws SQLException {
+        String sql = "SELECT gallery_id FROM galleries WHERE name = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, galleryName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("gallery_id");
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -70,12 +84,20 @@ public class JdbcExhibitionDao implements ExhibitionDao {
             stmt.setDate(3, exhibition.getEndDate() != null ? Date.valueOf(exhibition.getEndDate()) : null);
             stmt.setString(4, exhibition.getDescription());
             
-            // Note: You'll need to handle gallery_id - this is simplified
+            // Get gallery ID - either from object or search by name
+            Integer galleryId = null;
             if (exhibition.getGallery() != null) {
-                // For now, we assume gallery exists - you may need to query it by name
-                stmt.setNull(5, java.sql.Types.INTEGER);
+                if (exhibition.getGallery().getId() != null) {
+                    galleryId = exhibition.getGallery().getId();
+                } else if (exhibition.getGallery().getName() != null) {
+                    galleryId = getGalleryIdByName(conn, exhibition.getGallery().getName());
+                }
+            }
+            
+            if (galleryId != null) {
+                stmt.setInt(5, galleryId);
             } else {
-                stmt.setNull(5, java.sql.Types.INTEGER);
+                throw new SQLException("Gallery not found - cannot insert exhibition without valid gallery_id");
             }
             
             stmt.setString(6, exhibition.getCuratorName());
