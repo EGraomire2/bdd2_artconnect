@@ -1,8 +1,5 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.WorkshopDao;
-import com.project.artconnect.model.Workshop;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +8,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.dao.WorkshopDao;
+import com.project.artconnect.model.Workshop;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for WorkshopDao.
@@ -192,17 +193,13 @@ public class JdbcWorkshopDao implements WorkshopDao {
      * Delete a workshop from the database.
      */
     @Override
-    public void delete(Long workshopId) {
-        if (workshopId == null) {
-            throw new IllegalArgumentException("Workshop ID cannot be null");
-        }
-
+    public void delete(int workshopId) {
         String sql = "DELETE FROM workshops WHERE workshop_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setLong(1, workshopId);
+            stmt.setInt(1, workshopId);
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
