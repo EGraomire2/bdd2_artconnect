@@ -73,11 +73,13 @@ public class InMemoryArtistService implements ArtistService {
     @Override
     public void updateArtist(Artist artist) {
         artists.put(artist.getName(), artist);
+        jdbcArtistDao.update(artist); // Mise à jour de l'artiste dans la base de données
     }
 
     @Override
     public void deleteArtist(String name) {
         artists.remove(name);
+        jdbcArtistDao.delete(name); // Suppression de l'artiste depuis la base de données
     }
 
     @Override
