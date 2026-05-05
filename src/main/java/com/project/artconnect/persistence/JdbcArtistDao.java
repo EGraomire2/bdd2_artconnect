@@ -1,15 +1,16 @@
 package com.project.artconnect.persistence;
 
-import com.project.artconnect.dao.ArtistDao;
-import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
-import com.project.artconnect.util.ConnectionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.project.artconnect.dao.ArtistDao;
+import com.project.artconnect.model.Artist;
+import com.project.artconnect.model.Discipline;
+import com.project.artconnect.util.ConnectionManager;
 
 /**
  * JDBC implementation for ArtistDao.
@@ -33,16 +34,6 @@ public class JdbcArtistDao implements ArtistDao {
         artist.setSocialMedia(rs.getString("social_media"));
         artist.setActive(rs.getBoolean("is_active"));
         return artist;
-    }
-
-    /**
-     * Maps a ResultSet row to a Discipline object.
-     */
-    private Discipline mapResultSetToDiscipline(ResultSet rs) throws SQLException {
-        Discipline discipline = new Discipline();
-        discipline.setId(rs.getInt("discipline_id"));
-        discipline.setName(rs.getString("discipline_name"));
-        return discipline;
     }
 
     @Override
