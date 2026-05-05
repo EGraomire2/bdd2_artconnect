@@ -46,8 +46,7 @@ public class JdbcArtistService implements ArtistService {
 
     @Override
     public List<Discipline> getAllDisciplines() {
-        // TODO: Implement if needed - currently returns empty
-        return new ArrayList<>();
+        return artistDao.getAllDisciplines();
     }
 
     @Override

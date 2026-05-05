@@ -195,12 +195,14 @@ public class JdbcArtistDao implements ArtistDao {
         String sql = "SELECT * FROM disciplines";
         
         try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    disciplines.add(mapResultSetToDiscipline(rs));
-                }
+            while (rs.next()) {
+                Discipline discipline = new Discipline();
+                discipline.setId(rs.getInt("discipline_id"));
+                discipline.setName(rs.getString("name"));
+                disciplines.add(discipline);
             }
         } catch (SQLException e) {
             System.err.println("Error fetching disciplines: " + e.getMessage());
