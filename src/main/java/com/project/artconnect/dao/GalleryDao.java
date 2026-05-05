@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface GalleryDao {
     Optional<Gallery> findById(Long id);
+    Optional<Gallery> findByName(String name);
 
     List<Gallery> findAll();
 }
