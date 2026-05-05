@@ -114,6 +114,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Save a workshop to the database with proper foreign key handling.
      */
+    @Override
     public void save(Workshop workshop) {
         String sql = "INSERT INTO workshops (title, workshop_date, duration_minutes, max_participants, price, instructor_id, location, description, level) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -160,6 +161,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Update a workshop in the database.
      */
+    @Override
     public void update(Workshop workshop) {
         String sql = "UPDATE workshops SET workshop_date = ?, duration_minutes = ?, max_participants = ?, price = ?, location = ?, description = ?, level = ? "
                    + "WHERE workshop_id = ?";
@@ -189,13 +191,18 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Delete a workshop from the database.
      */
-    public void delete(Integer workshopId) {
+    @Override
+    public void delete(Long workshopId) {
+        if (workshopId == null) {
+            throw new IllegalArgumentException("Workshop ID cannot be null");
+        }
+
         String sql = "DELETE FROM workshops WHERE workshop_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, workshopId);
+            stmt.setLong(1, workshopId);
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
@@ -208,4 +215,5 @@ public class JdbcWorkshopDao implements WorkshopDao {
             e.printStackTrace();
         }
     }
+
 }
