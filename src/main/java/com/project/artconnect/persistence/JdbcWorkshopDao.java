@@ -192,13 +192,17 @@ public class JdbcWorkshopDao implements WorkshopDao {
      * Delete a workshop from the database.
      */
     @Override
-    public void delete(Integer workshopId) {
+    public void delete(Long workshopId) {
+        if (workshopId == null) {
+            throw new IllegalArgumentException("Workshop ID cannot be null");
+        }
+
         String sql = "DELETE FROM workshops WHERE workshop_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, workshopId);
+            stmt.setLong(1, workshopId);
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
@@ -211,5 +215,5 @@ public class JdbcWorkshopDao implements WorkshopDao {
             e.printStackTrace();
         }
     }
-    
+
 }
