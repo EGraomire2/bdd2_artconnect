@@ -92,4 +92,64 @@ public class JdbcGalleryDao implements GalleryDao {
         }
         return Optional.empty();
     }
+    @Override
+    public void save(Gallery gallery) {
+        String sql = "INSERT INTO galleries (name, address, owner_name, opening_hours, contact_phone, rating, website) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, gallery.getName());
+            stmt.setString(2, gallery.getAddress());
+            stmt.setString(3, gallery.getOwnerName());
+            stmt.setString(4, gallery.getOpeningHours());
+            stmt.setString(5, gallery.getContactPhone());
+            stmt.setDouble(6, gallery.getRating());
+            stmt.setString(7, gallery.getWebsite());
+            
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error saving gallery: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update(Gallery gallery) {
+        String sql = "UPDATE galleries SET address = ?, owner_name = ?, opening_hours = ?, contact_phone = ?, rating = ?, website = ? "
+                   + "WHERE name = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, gallery.getAddress());
+            stmt.setString(2, gallery.getOwnerName());
+            stmt.setString(3, gallery.getOpeningHours());
+            stmt.setString(4, gallery.getContactPhone());
+            stmt.setDouble(5, gallery.getRating());
+            stmt.setString(6, gallery.getWebsite());
+            stmt.setString(7, gallery.getName());
+            
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating gallery: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        String sql = "DELETE FROM galleries WHERE gallery_id = ?";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting gallery: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    
 }
