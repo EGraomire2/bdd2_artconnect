@@ -16,6 +16,8 @@ public interface ArtistDao {
     void delete(String artistName);
 
     List<Artist> findByCity(String city);
-    
+
     List<Artist> findByName(String name);
+
+    List<Discipline> getAllDisciplines();
 }

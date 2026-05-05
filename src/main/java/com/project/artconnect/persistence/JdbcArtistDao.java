@@ -177,4 +177,25 @@ public class JdbcArtistDao implements ArtistDao {
         
         return artists;
     }
+
+    @Override
+    public List<Discipline> getAllDisciplines() {
+        List<Discipline> disciplines = new ArrayList<>();
+        String sql = "SELECT * FROM disciplines";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    disciplines.add(mapResultSetToDiscipline(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching disciplines: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return disciplines;
+    }
 }

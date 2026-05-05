@@ -84,7 +84,7 @@ public class InMemoryArtistService implements ArtistService {
 
     @Override
     public List<Discipline> getAllDisciplines() {
-        return new ArrayList<>(disciplines.values());
+        return jdbcArtistDao.getAllDisciplines(); // Récupération de toutes les disciplines depuis la base de données
     }
 
     @Override

@@ -93,7 +93,6 @@ public class JdbcWorkshopDao implements WorkshopDao {
         return workshops;
     }
 
-<<<<<<< HEAD
     @Override
     public Optional<Workshop> findByTitle(String title) {
         String sql = "SELECT * FROM workshops WHERE title = ?";
@@ -110,7 +109,6 @@ public class JdbcWorkshopDao implements WorkshopDao {
             e.printStackTrace();
         }
         return Optional.empty();
-=======
     /**
      * Save a workshop to the database with proper foreign key handling.
      */
@@ -207,6 +205,5 @@ public class JdbcWorkshopDao implements WorkshopDao {
             System.err.println("Error deleting workshop: " + e.getMessage());
             e.printStackTrace();
         }
->>>>>>> 9ee9b6b48768473fa02f35b3fbf3d728da5e6191
     }
 }
