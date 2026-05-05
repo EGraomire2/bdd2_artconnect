@@ -151,4 +151,26 @@ public class JdbcExhibitionDao implements ExhibitionDao {
             e.printStackTrace();
         }
     }
+
+    public List<Exhibition> findByGalleryId(int galleryId) {
+        List<Exhibition> exhibitions = new ArrayList<>();
+        String sql = "SELECT * FROM exhibitions WHERE gallery_id = ?";
+        
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, galleryId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    exhibitions.add(mapResultSetToExhibition(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching exhibitions by gallery: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return exhibitions;
+    }
 }
