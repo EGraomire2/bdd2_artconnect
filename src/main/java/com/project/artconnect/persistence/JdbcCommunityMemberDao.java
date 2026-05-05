@@ -112,7 +112,7 @@ public class JdbcCommunityMemberDao implements CommunityMemberDao {
     }
 
     @Override
-    public void delete(int memberId) throws SQLException {
+    public void delete(int memberId) {
         String sql = "DELETE FROM community_members WHERE member_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();

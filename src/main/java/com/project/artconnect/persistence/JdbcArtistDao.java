@@ -114,7 +114,7 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void delete(int artistId) throws SQLException {
+    public void delete(int artistId) {
         String sql = "DELETE FROM artists WHERE artist_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
@@ -122,6 +122,8 @@ public class JdbcArtistDao implements ArtistDao {
             
             stmt.setInt(1, artistId);
             stmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Error deleting artist: " + e.getMessage());
         }
     }
 
@@ -222,7 +224,7 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void addDisciplineToArtist(int artistId, int disciplineId) throws SQLException {
+    public void addDisciplineToArtist(int artistId, int disciplineId) {
         // Check if association already exists
         if (artistHasDiscipline(artistId, disciplineId)) {
             throw new SQLException("Cet artiste a déjà cette discipline");
@@ -240,7 +242,7 @@ public class JdbcArtistDao implements ArtistDao {
     }
 
     @Override
-    public void removeDisciplineFromArtist(int artistId, int disciplineId) throws SQLException {
+    public void removeDisciplineFromArtist(int artistId, int disciplineId) {
         String sql = "DELETE FROM artist_disciplines WHERE artist_id = ? AND discipline_id = ?";
         
         try (Connection conn = ConnectionManager.getConnection();
