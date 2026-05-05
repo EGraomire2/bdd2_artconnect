@@ -29,7 +29,7 @@ public class JdbcArtistDao implements ArtistDao {
         artist.setCity(rs.getString("city"));
         artist.setWebsite(rs.getString("website"));
         artist.setSocialMedia(rs.getString("social_media"));
-        artist.setIsActive(rs.getBoolean("is_active"));
+        artist.setActive(rs.getBoolean("is_active"));
         return artist;
     }
 
