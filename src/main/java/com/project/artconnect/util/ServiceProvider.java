@@ -1,6 +1,12 @@
 package com.project.artconnect.util;
 
-import com.project.artconnect.persistence.*;
+import com.project.artconnect.persistence.JdbcArtistDao;
+import com.project.artconnect.persistence.JdbcArtworkDao;
+import com.project.artconnect.persistence.JdbcBookingDao;
+import com.project.artconnect.persistence.JdbcCommunityMemberDao;
+import com.project.artconnect.persistence.JdbcGalleryDao;
+import com.project.artconnect.persistence.JdbcReviewDao;
+import com.project.artconnect.persistence.JdbcWorkshopDao;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.service.ArtworkService;
 import com.project.artconnect.service.CommunityService;
@@ -19,8 +25,8 @@ public class ServiceProvider {
     private static final ArtistService artistService = new JdbcArtistService(new JdbcArtistDao());
     private static final ArtworkService artworkService = new JdbcArtworkService(new JdbcArtworkDao());
     private static final GalleryService galleryService = new JdbcGalleryService(new JdbcGalleryDao());
-    private static final WorkshopService workshopService = new JdbcWorkshopService(new JdbcWorkshopDao());
-    private static final CommunityService communityService = new JdbcCommunityService(new JdbcCommunityMemberDao());
+    private static final WorkshopService workshopService = new JdbcWorkshopService(new JdbcWorkshopDao(), new JdbcBookingDao());
+    private static final CommunityService communityService = new JdbcCommunityService(new JdbcCommunityMemberDao(), new JdbcReviewDao());
 
     public static ArtistService getArtistService() {
         return artistService;
