@@ -1,0 +1,2 @@
+# ignorer les fichier compilé java
+*.class
