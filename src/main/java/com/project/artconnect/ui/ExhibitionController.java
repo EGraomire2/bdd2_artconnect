@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,6 +45,30 @@ public class ExhibitionController {
         List<Exhibition> all = new ArrayList<>();
         for (Gallery g : galleryService.getAllGalleries()) {
             all.addAll(g.getExhibitions());
+        }
+        refreshData();
+    }
+
+    @FXML
+    private void handleAddExhibition() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Add New Exhibition");
+        dialog.setHeaderText("Enter exhibition title:");
+        String title = dialog.showAndWait().orElse("");
+        dialog.setHeaderText("Enter exhibition theme:");
+        String theme = dialog.showAndWait().orElse("");
+        dialog.setHeaderText("Enter curator name:");
+        String curatorName = dialog.showAndWait().orElse("");
+        Exhibition newExhibition = new Exhibition(title, LocalDate.now(), LocalDate.now().plusMonths(1), null);
+        newExhibition.setTheme(theme);
+        newExhibition.setCuratorName(curatorName);
+        refreshData();
+    }
+
+    private void refreshData() {
+        List<Exhibition> all = new ArrayList<>();
+        for (Gallery g : galleryService.getAllGalleries()) {
+            all.addAll(galleryService.getExhibitionsByGallery(g));
         }
         exhibitionTable.setItems(FXCollections.observableArrayList(all));
     }

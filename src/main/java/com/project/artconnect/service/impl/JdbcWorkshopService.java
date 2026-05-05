@@ -43,6 +43,7 @@ public class JdbcWorkshopService implements WorkshopService {
         Booking b = new Booking(workshop, member);
         bookingDao.save(b);
         member.addBooking(b);
+        
     }
 
     @Override

@@ -22,13 +22,26 @@ public class Artist {
 
     public Artist() {
     }
-
-    public Artist(String name, String bio, Integer birthYear, String contactEmail, String city) {
+    
+    public Artist(String name, String bio, Integer birthYear, String contactEmail, String city){
         this.name = name;
         this.bio = bio;
         this.birthYear = birthYear;
         this.contactEmail = contactEmail;
         this.city = city;
+        this.isActive = true;
+    }
+
+    public Artist(Integer id, String name, String bio, Integer birthYear, String contactEmail, String city, String phone, String website, String socialMedia) {
+        this.id = id;
+        this.name = name;
+        this.bio = bio;
+        this.birthYear = birthYear;
+        this.contactEmail = contactEmail;
+        this.city = city;
+        this.phone = phone;
+        this.website = website;
+        this.socialMedia = socialMedia;
         this.isActive = true;
     }
 

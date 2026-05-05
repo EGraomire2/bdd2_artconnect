@@ -1,17 +1,17 @@
 package com.project.artconnect.dao;
 
-import com.project.artconnect.model.ArtworkTag;
-import java.sql.SQLException;
 import java.util.List;
+
+import com.project.artconnect.model.ArtworkTag;
 
 public interface ArtworkTagDao {
     List<ArtworkTag> findAll();
 
-    ArtworkTag save(ArtworkTag tag) throws SQLException;
+    ArtworkTag save(ArtworkTag tag);
     
-    ArtworkTag update(ArtworkTag tag) throws SQLException;
+    ArtworkTag update(ArtworkTag tag);
     
-    void delete(int tagId) throws SQLException;
+    void delete(int tagId);
     
     ArtworkTag findByName(String name);
     

@@ -4,9 +4,14 @@ import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.util.ServiceProvider;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ArtistController {
@@ -50,6 +55,28 @@ public class ArtistController {
     private void handleReset() {
         searchField.clear();
         disciplineFilter.setValue(null);
+        refreshTable();
+    }
+
+    @FXML
+    private void handleAddArtist() {
+        // Open add artist dialog and get new artist details
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Add New Artist");
+        dialog.setHeaderText("Enter artist name:");
+        String name = dialog.showAndWait().orElse("");
+        dialog.setHeaderText("Enter artist bio:");
+        String bio = dialog.showAndWait().orElse("");
+        dialog.setHeaderText("Enter artist birth year:");
+        int birthYear = Integer.parseInt(dialog.showAndWait().orElse("0"));
+        dialog.setHeaderText("Enter artist contact email:");
+        String email = dialog.showAndWait().orElse("");
+        dialog.setHeaderText("Enter artist city:");
+        String city = dialog.showAndWait().orElse("");
+        Artist newArtist = new Artist(name, bio, birthYear, email, city);
+
+        // After adding, refresh the table
+        artistService.createArtist(newArtist);
         refreshTable();
     }
 
