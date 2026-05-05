@@ -21,6 +21,7 @@ public class JdbcArtistDao implements ArtistDao {
      */
     private Artist mapResultSetToArtist(ResultSet rs) throws SQLException {
         Artist artist = new Artist();
+        artist.setId(rs.getInt("artist_id"));
         artist.setName(rs.getString("name"));
         artist.setBio(rs.getString("bio"));
         artist.setBirthYear(rs.getObject("birth_year") != null ? rs.getInt("birth_year") : null);

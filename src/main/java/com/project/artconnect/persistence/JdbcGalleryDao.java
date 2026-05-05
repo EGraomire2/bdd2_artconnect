@@ -22,6 +22,7 @@ public class JdbcGalleryDao implements GalleryDao {
      */
     private Gallery mapResultSetToGallery(ResultSet rs) throws SQLException {
         Gallery gallery = new Gallery();
+        gallery.setId(rs.getInt("gallery_id"));
         gallery.setName(rs.getString("name"));
         gallery.setAddress(rs.getString("address"));
         gallery.setOwnerName(rs.getString("owner_name"));
