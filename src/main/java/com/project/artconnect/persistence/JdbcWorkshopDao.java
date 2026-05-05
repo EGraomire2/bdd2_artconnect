@@ -114,6 +114,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Save a workshop to the database with proper foreign key handling.
      */
+    @Override
     public void save(Workshop workshop) {
         String sql = "INSERT INTO workshops (title, workshop_date, duration_minutes, max_participants, price, instructor_id, location, description, level) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -160,6 +161,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Update a workshop in the database.
      */
+    @Override
     public void update(Workshop workshop) {
         String sql = "UPDATE workshops SET workshop_date = ?, duration_minutes = ?, max_participants = ?, price = ?, location = ?, description = ?, level = ? "
                    + "WHERE workshop_id = ?";
@@ -189,6 +191,7 @@ public class JdbcWorkshopDao implements WorkshopDao {
     /**
      * Delete a workshop from the database.
      */
+    @Override
     public void delete(Integer workshopId) {
         String sql = "DELETE FROM workshops WHERE workshop_id = ?";
         
@@ -208,4 +211,5 @@ public class JdbcWorkshopDao implements WorkshopDao {
             e.printStackTrace();
         }
     }
+    
 }
