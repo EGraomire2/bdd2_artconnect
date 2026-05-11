@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10.0" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.artconnect.ui.ReviewController">
+    <padding>
+        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+    </padding>
+
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="Search reviews" HBox.hgrow="ALWAYS" />
+        <Button text="Search" onAction="#handleSearch" />
+        <Button text="Reset" onAction="#handleReset" />
+    </HBox>
+
+    <TableView fx:id="reviewTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="70" />
+            <TableColumn fx:id="artworkColumn" text="Artwork" prefWidth="240" />
+            <TableColumn fx:id="reviewerColumn" text="Reviewer" prefWidth="220" />
+            <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="90" />
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="130" />
+            <TableColumn fx:id="commentColumn" text="Comment" prefWidth="330" />
+        </columns>
+    </TableView>
+
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Button text="Add" onAction="#handleAddReview" />
+        <Button text="Edit" onAction="#handleEditReview" />
+        <Button text="Delete" onAction="#handleDeleteReview" />
+    </HBox>
+</VBox>

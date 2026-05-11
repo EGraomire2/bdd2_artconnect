@@ -10,13 +10,17 @@ import com.project.artconnect.persistence.JdbcReviewDao;
 import com.project.artconnect.persistence.JdbcWorkshopDao;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.service.ArtworkService;
+import com.project.artconnect.service.BookingService;
 import com.project.artconnect.service.CommunityService;
 import com.project.artconnect.service.GalleryService;
+import com.project.artconnect.service.ReviewService;
 import com.project.artconnect.service.WorkshopService;
 import com.project.artconnect.service.impl.JdbcArtistService;
 import com.project.artconnect.service.impl.JdbcArtworkService;
+import com.project.artconnect.service.impl.JdbcBookingService;
 import com.project.artconnect.service.impl.JdbcCommunityService;
 import com.project.artconnect.service.impl.JdbcGalleryService;
+import com.project.artconnect.service.impl.JdbcReviewService;
 import com.project.artconnect.service.impl.JdbcWorkshopService;
 
 /**
@@ -28,6 +32,8 @@ public class ServiceProvider {
     private static final GalleryService galleryService = new JdbcGalleryService(new JdbcGalleryDao(), new JdbcExhibitionDao());
     private static final WorkshopService workshopService = new JdbcWorkshopService(new JdbcWorkshopDao(), new JdbcBookingDao());
     private static final CommunityService communityService = new JdbcCommunityService(new JdbcCommunityMemberDao(), new JdbcReviewDao());
+    private static final BookingService bookingService = new JdbcBookingService(new JdbcBookingDao(), workshopService, communityService);
+    private static final ReviewService reviewService = new JdbcReviewService(new JdbcReviewDao(), artworkService, communityService);
 
     public static ArtistService getArtistService() {
         return artistService;
@@ -47,5 +53,13 @@ public class ServiceProvider {
 
     public static CommunityService getCommunityService() {
         return communityService;
+    }
+
+    public static BookingService getBookingService() {
+        return bookingService;
+    }
+
+    public static ReviewService getReviewService() {
+        return reviewService;
     }
 }

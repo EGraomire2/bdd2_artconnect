@@ -27,9 +27,17 @@ public class ArtworkController {
     @FXML
     private TableColumn<Artwork, String> typeColumn;
     @FXML
+    private TableColumn<Artwork, Integer> creationYearColumn;
+    @FXML
+    private TableColumn<Artwork, String> mediumColumn;
+    @FXML
+    private TableColumn<Artwork, String> dimensionsColumn;
+    @FXML
     private TableColumn<Artwork, Double> priceColumn;
     @FXML
     private TableColumn<Artwork, String> statusColumn;
+    @FXML
+    private TableColumn<Artwork, String> descriptionColumn;
     @FXML
     private TableColumn<Artwork, String> artistColumn;
 
@@ -39,9 +47,13 @@ public class ArtworkController {
     @FXML
     public void initialize() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        creationYearColumn.setCellValueFactory(new PropertyValueFactory<>("creationYear"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        mediumColumn.setCellValueFactory(new PropertyValueFactory<>("medium"));
+        dimensionsColumn.setCellValueFactory(new PropertyValueFactory<>("dimensions"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         artistColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getArtist() != null ? cellData.getValue().getArtist().getName() : "Unknown"));

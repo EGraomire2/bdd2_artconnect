@@ -33,6 +33,12 @@
         <Tab text="Workshops">
             <fx:include source="WorkshopsTab.fxml"/>
         </Tab>
+        <Tab text="Bookings">
+            <fx:include source="BookingsTab.fxml"/>
+        </Tab>
+        <Tab text="Reviews">
+            <fx:include source="ReviewsTab.fxml"/>
+        </Tab>
         <Tab text="Community">
             <fx:include source="CommunityTab.fxml"/>
         </Tab>

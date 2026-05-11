@@ -22,6 +22,12 @@ public class CommunityController {
     private TableColumn<CommunityMember, String> emailColumn;
     @FXML
     private TableColumn<CommunityMember, String> cityColumn;
+    @FXML
+    private TableColumn<CommunityMember, Integer> birthYearColumn;
+    @FXML
+    private TableColumn<CommunityMember, String> phoneColumn;
+    @FXML
+    private TableColumn<CommunityMember, String> membershipTypeColumn;
 
     private final CommunityService communityService = ServiceProvider.getCommunityService();
 
@@ -29,7 +35,10 @@ public class CommunityController {
     public void initialize() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        birthYearColumn.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
+        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
+        membershipTypeColumn.setCellValueFactory(new PropertyValueFactory<>("membershipType"));
 
         refreshTable();
     }
@@ -72,8 +81,9 @@ public class CommunityController {
         if (email == null) {
             return;
         }
+        Integer currentBirthYear = selected.getBirthYear();
         Integer birthYear = UiDialogUtils.promptInt("Edit Community Member", "Enter member birth year:",
-            selected.getBirthYear() != null ? selected.getBirthYear() : Integer.valueOf(0));
+            currentBirthYear != null ? currentBirthYear : 0);
         if (birthYear == null) {
             return;
         }

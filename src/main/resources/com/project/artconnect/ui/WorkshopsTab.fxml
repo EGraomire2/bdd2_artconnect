@@ -21,8 +21,12 @@
             <TableColumn fx:id="titleColumn" text="Title" prefWidth="200" />
             <TableColumn fx:id="instructorColumn" text="Instructor" prefWidth="150" />
             <TableColumn fx:id="dateColumn" text="Date" prefWidth="150" />
+            <TableColumn fx:id="durationColumn" text="Duration" prefWidth="100" />
+            <TableColumn fx:id="participantsColumn" text="Max Participants" prefWidth="130" />
             <TableColumn fx:id="priceColumn" text="Price" prefWidth="80" />
+            <TableColumn fx:id="locationColumn" text="Location" prefWidth="160" />
             <TableColumn fx:id="levelColumn" text="Level" prefWidth="100" />
+            <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="300" />
         </columns>
     </TableView>
 </VBox>

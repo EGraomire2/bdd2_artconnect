@@ -16,5 +16,15 @@
         <Button text="Edit" onAction="#handleEditGallery" />
         <Button text="Delete" onAction="#handleDeleteGallery" />
     </HBox>
-    <ListView fx:id="galleryList" VBox.vgrow="ALWAYS" />
+    <TableView fx:id="galleryTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200" />
+            <TableColumn fx:id="addressColumn" text="Address" prefWidth="220" />
+            <TableColumn fx:id="ownerNameColumn" text="Owner" prefWidth="160" />
+            <TableColumn fx:id="openingHoursColumn" text="Opening Hours" prefWidth="160" />
+            <TableColumn fx:id="contactPhoneColumn" text="Phone" prefWidth="140" />
+            <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="80" />
+            <TableColumn fx:id="websiteColumn" text="Website" prefWidth="220" />
+        </columns>
+    </TableView>
 </VBox>
