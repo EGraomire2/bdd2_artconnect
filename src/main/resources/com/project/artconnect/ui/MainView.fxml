@@ -9,31 +9,39 @@
         <Menu text="File">
             <MenuItem text="Exit" onAction="#handleExit"/>
         </Menu>
+        <Menu text="Access">
+            <MenuItem fx:id="loginMenuItem" text="Login..." onAction="#handleOpenLogin"/>
+            <MenuItem fx:id="logoutMenuItem" text="Logout" onAction="#handleLogout" disable="true"/>
+        </Menu>
         <Menu text="Help">
             <MenuItem text="About"/>
         </Menu>
     </MenuBar>
+    <ToolBar>
+        <Button fx:id="loginButton" text="Login" onAction="#handleOpenLogin" />
+        <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" disable="true" />
+    </ToolBar>
     
     <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <Tab text="Discover">
+        <Tab fx:id="discoverTab" text="Discover">
             <fx:include source="DiscoverTab.fxml"/>
         </Tab>
-        <Tab text="Artists">
+        <Tab fx:id="artistsTab" text="Artists">
             <fx:include source="ArtistsTab.fxml"/>
         </Tab>
-        <Tab text="Artworks">
+        <Tab fx:id="artworksTab" text="Artworks">
             <fx:include source="ArtworksTab.fxml"/>
         </Tab>
-        <Tab text="Galleries">
+        <Tab fx:id="galleriesTab" text="Galleries">
             <fx:include source="GalleriesTab.fxml"/>
         </Tab>
-        <Tab text="Exhibitions">
+        <Tab fx:id="exhibitionsTab" text="Exhibitions">
             <fx:include source="ExhibitionsTab.fxml"/>
         </Tab>
-        <Tab text="Workshops">
+        <Tab fx:id="workshopsTab" text="Workshops">
             <fx:include source="WorkshopsTab.fxml"/>
         </Tab>
-        <Tab text="Community">
+        <Tab fx:id="communityTab" text="Community">
             <fx:include source="CommunityTab.fxml"/>
         </Tab>
     </TabPane>
@@ -42,6 +50,6 @@
         <padding>
             <Insets right="10.0" left="10.0"/>
         </padding>
-        <Label text="ArtConnect Pro v1.0 | Mode: In-Memory"/>
+        <Label fx:id="userStatusLabel" text="Current user: defaultuser (read-only)"/>
     </HBox>
 </VBox>
