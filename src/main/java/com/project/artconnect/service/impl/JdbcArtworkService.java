@@ -3,6 +3,7 @@ package com.project.artconnect.service.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Artwork;
@@ -52,5 +53,19 @@ public class JdbcArtworkService implements ArtworkService {
     @Override
     public void deleteArtwork(int artworkId) {
         artworkDao.delete(artworkId);
+    }
+
+    @Override
+    public List<Artwork> searchArtworks(String query, String type, String status) {
+        String q = (query == null) ? "" : query.toLowerCase();
+        return artworkDao.findAll().stream()
+                .filter(a -> q.isEmpty()
+                        || (a.getTitle() != null && a.getTitle().toLowerCase().contains(q))
+                        || (a.getArtist() != null && a.getArtist().getName() != null && a.getArtist().getName().toLowerCase().contains(q))
+                        || (a.getType() != null && a.getType().toLowerCase().contains(q)))
+                .filter(a -> type == null || type.isEmpty() || (a.getType() != null && a.getType().equalsIgnoreCase(type)))
+            .filter(a -> status == null || status.isEmpty()
+                || (a.getStatus() != null && a.getStatus().name().equalsIgnoreCase(status)))
+                .collect(Collectors.toList());
     }
 }

@@ -7,11 +7,11 @@ import com.project.artconnect.util.ServiceProvider;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ArtistController {
@@ -60,27 +60,98 @@ public class ArtistController {
 
     @FXML
     private void handleAddArtist() {
-        // Open add artist dialog and get new artist details
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Add New Artist");
-        dialog.setHeaderText("Enter artist name:");
-        String name = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter artist bio:");
-        String bio = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter artist birth year:");
-        int birthYear = Integer.parseInt(dialog.showAndWait().orElse("0"));
-        dialog.setHeaderText("Enter artist contact email:");
-        String email = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter artist city:");
-        String city = dialog.showAndWait().orElse("");
+        String name = UiDialogUtils.promptText("Add New Artist", "Enter artist name:", "");
+        if (name == null) {
+            return;
+        }
+        String bio = UiDialogUtils.promptText("Add New Artist", "Enter artist bio:", "");
+        if (bio == null) {
+            return;
+        }
+        Integer birthYear = UiDialogUtils.promptInt("Add New Artist", "Enter artist birth year:", 0);
+        if (birthYear == null) {
+            return;
+        }
+        String email = UiDialogUtils.promptText("Add New Artist", "Enter artist contact email:", "");
+        if (email == null) {
+            return;
+        }
+        String city = UiDialogUtils.promptText("Add New Artist", "Enter artist city:", "");
+        if (city == null) {
+            return;
+        }
         Artist newArtist = new Artist(name, bio, birthYear, email, city);
-
-        // After adding, refresh the table
         artistService.createArtist(newArtist);
+        refreshTable();
+    }
+
+    @FXML
+    private void handleEditArtist() {
+        Artist selected = artistTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showWarning("Edit Artist", "Please select an artist to edit.");
+            return;
+        }
+
+        String bio = UiDialogUtils.promptText("Edit Artist", "Enter artist bio:", selected.getBio());
+        if (bio == null) {
+            return;
+        }
+        Integer birthYear = UiDialogUtils.promptInt("Edit Artist", "Enter artist birth year:",
+                selected.getBirthYear() != null ? selected.getBirthYear() : 0);
+        if (birthYear == null) {
+            return;
+        }
+        String email = UiDialogUtils.promptText("Edit Artist", "Enter artist contact email:", selected.getContactEmail());
+        if (email == null) {
+            return;
+        }
+        String city = UiDialogUtils.promptText("Edit Artist", "Enter artist city:", selected.getCity());
+        if (city == null) {
+            return;
+        }
+        String phone = UiDialogUtils.promptText("Edit Artist", "Enter artist phone:", selected.getPhone());
+        if (phone == null) {
+            return;
+        }
+        String website = UiDialogUtils.promptText("Edit Artist", "Enter artist website:", selected.getWebsite());
+        if (website == null) {
+            return;
+        }
+        String socialMedia = UiDialogUtils.promptText("Edit Artist", "Enter artist social media:", selected.getSocialMedia());
+        if (socialMedia == null) {
+            return;
+        }
+
+        Artist updated = new Artist(selected.getId(), selected.getName(), bio, birthYear, email, city, phone, website,
+                socialMedia);
+        updated.setActive(selected.isActive());
+        updated.setDisciplines(selected.getDisciplines());
+        updated.setArtworks(selected.getArtworks());
+        artistService.updateArtist(updated);
+        refreshTable();
+    }
+
+    @FXML
+    private void handleDeleteArtist() {
+        Artist selected = artistTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showWarning("Delete Artist", "Please select an artist to delete.");
+            return;
+        }
+        artistService.deleteArtist(selected.getId());
         refreshTable();
     }
 
     private void refreshTable() {
         artistTable.setItems(FXCollections.observableArrayList(artistService.getAllArtists()));
+    }
+
+    private void showWarning(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

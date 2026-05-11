@@ -3,6 +3,7 @@ package com.project.artconnect.service.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.project.artconnect.model.Exhibition;
 import com.project.artconnect.model.Gallery;
@@ -29,8 +30,11 @@ public class JdbcGalleryService implements GalleryService {
 
     @Override
     public Optional<Gallery> getGalleryByName(String name) {
+        if (name == null) {
+            return Optional.empty();
+        }
         return galleryDao.findAll().stream()
-                .filter(g -> g.getName().equalsIgnoreCase(name))
+                .filter(g -> g.getName() != null && g.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
@@ -40,5 +44,32 @@ public class JdbcGalleryService implements GalleryService {
             return Collections.emptyList();
         }
         return exhibitionDao.findByGalleryId(gallery.getId());
+    }
+
+    @Override
+    public List<Gallery> searchGalleries(String query, String address, String unused) {
+        String q = (query == null) ? "" : query.toLowerCase();
+        return galleryDao.findAll().stream()
+                .filter(g -> q.isEmpty()
+                        || (g.getName() != null && g.getName().toLowerCase().contains(q))
+                        || (g.getAddress() != null && g.getAddress().toLowerCase().contains(q)))
+                .filter(g -> address == null || address.isEmpty()
+                        || (g.getAddress() != null && g.getAddress().equalsIgnoreCase(address)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void createGallery(Gallery gallery) {
+        galleryDao.save(gallery);
+    }
+
+    @Override
+    public void updateGallery(Gallery gallery) {
+        galleryDao.update(gallery);
+    }
+
+    @Override
+    public void deleteGallery(int galleryId) {
+        galleryDao.delete(galleryId);
     }
 }

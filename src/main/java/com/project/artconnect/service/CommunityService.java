@@ -1,9 +1,10 @@
 package com.project.artconnect.service;
 
-import com.project.artconnect.model.CommunityMember;
-import com.project.artconnect.model.Review;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.model.CommunityMember;
+import com.project.artconnect.model.Review;
 
 public interface CommunityService {
     List<CommunityMember> getAllMembers();
@@ -11,4 +12,12 @@ public interface CommunityService {
     Optional<CommunityMember> getMemberByName(String name);
 
     List<Review> getReviewsByMember(CommunityMember member);
+
+    List<CommunityMember> searchMembers(String query, String city, String email);
+
+    void createMember(CommunityMember member);
+
+    void updateMember(CommunityMember member);
+
+    void deleteMember(int memberId);
 }

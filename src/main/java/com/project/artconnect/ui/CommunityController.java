@@ -8,10 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class CommunityController {
+    @FXML
+    private TextField searchField;
     @FXML
     private TableView<CommunityMember> memberTable;
     @FXML
@@ -34,20 +36,98 @@ public class CommunityController {
 
     @FXML
     private void handleAddMember() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Add New Community Member");
-        dialog.setHeaderText("Enter member name:");
-        String name = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter member email:");
-        String email = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter member phone:");
-        String phone = dialog.showAndWait().orElse("");
-        dialog.setHeaderText("Enter member city:");
-        String city = dialog.showAndWait().orElse("");
+        String name = UiDialogUtils.promptText("Add Community Member", "Enter member name:", "");
+        if (name == null) {
+            return;
+        }
+        String email = UiDialogUtils.promptText("Add Community Member", "Enter member email:", "");
+        if (email == null) {
+            return;
+        }
+        String phone = UiDialogUtils.promptText("Add Community Member", "Enter member phone:", "");
+        if (phone == null) {
+            return;
+        }
+        String city = UiDialogUtils.promptText("Add Community Member", "Enter member city:", "");
+        if (city == null) {
+            return;
+        }
+
         CommunityMember newMember = new CommunityMember(name, email);
         newMember.setPhone(phone);
         newMember.setCity(city);
-        communityService.getAllMembers(); // Call service to add - add method needed
+        communityService.createMember(newMember);
+        refreshTable();
+    }
+
+    @FXML
+    private void handleEditMember() {
+        CommunityMember selected = memberTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            UiDialogUtils.warn("Edit Community Member", "Please select a member to edit.");
+            return;
+        }
+
+        String email = UiDialogUtils.promptText("Edit Community Member", "Enter member email:", selected.getEmail());
+        if (email == null) {
+            return;
+        }
+        Integer birthYear = UiDialogUtils.promptInt("Edit Community Member", "Enter member birth year:",
+            selected.getBirthYear() != null ? selected.getBirthYear() : Integer.valueOf(0));
+        if (birthYear == null) {
+            return;
+        }
+        String phone = UiDialogUtils.promptText("Edit Community Member", "Enter member phone:", selected.getPhone());
+        if (phone == null) {
+            return;
+        }
+        String city = UiDialogUtils.promptText("Edit Community Member", "Enter member city:", selected.getCity());
+        if (city == null) {
+            return;
+        }
+        String membershipType = UiDialogUtils.promptText("Edit Community Member", "Enter membership type:",
+                selected.getMembershipType());
+        if (membershipType == null) {
+            return;
+        }
+
+        CommunityMember updated = new CommunityMember(selected.getName(), email);
+        updated.setId(selected.getId());
+        updated.setBirthYear(birthYear);
+        updated.setPhone(phone);
+        updated.setCity(city);
+        updated.setMembershipType(membershipType);
+        updated.setFavoriteDisciplines(selected.getFavoriteDisciplines());
+        updated.setBookings(selected.getBookings());
+        updated.setReviews(selected.getReviews());
+
+        communityService.updateMember(updated);
+        refreshTable();
+    }
+
+    @FXML
+    private void handleDeleteMember() {
+        CommunityMember selected = memberTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            UiDialogUtils.warn("Delete Community Member", "Please select a member to delete.");
+            return;
+        }
+        if (!UiDialogUtils.confirm("Delete Community Member", "Delete selected member?")) {
+            return;
+        }
+        communityService.deleteMember(selected.getId());
+        refreshTable();
+    }
+
+    @FXML
+    private void handleSearch() {
+        String query = searchField.getText();
+        memberTable.setItems(FXCollections.observableArrayList(communityService.searchMembers(query, null, null)));
+    }
+
+    @FXML
+    private void handleReset() {
+        searchField.clear();
         refreshTable();
     }
 
