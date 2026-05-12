@@ -27,14 +27,14 @@ public class DiscoverController {
     public void initialize() {
         List<Exhibition> featuredExhibitions = new ArrayList<>();
         for (Gallery gallery : galleryService.getAllGalleries()) {
-            featuredExhibitions.addAll(gallery.getExhibitions());
+            featuredExhibitions.addAll(galleryService.getExhibitionsByGallery(gallery));
             if (featuredExhibitions.size() >= 3) {
                 break;
             }
         }
 
         featuredExhibitions.stream().limit(3).forEach(this::addExhibitionCard);
-        workshopService.getAllWorkshops().stream().limit(3).forEach(this::addWorkshopCard);
+        workshopService.getAllWorkshops().stream().limit(4).forEach(this::addWorkshopCard);
     }
 
     private void addExhibitionCard(Exhibition exhibition) {
