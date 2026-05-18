@@ -6,32 +6,44 @@ import com.project.artconnect.util.ServiceProvider;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class GalleryController {
     @FXML
     private TextField searchField;
     @FXML
-    private ListView<Gallery> galleryList;
+    private TableView<Gallery> galleryTable;
+    @FXML
+    private TableColumn<Gallery, String> nameColumn;
+    @FXML
+    private TableColumn<Gallery, String> addressColumn;
+    @FXML
+    private TableColumn<Gallery, String> ownerNameColumn;
+    @FXML
+    private TableColumn<Gallery, String> openingHoursColumn;
+    @FXML
+    private TableColumn<Gallery, String> contactPhoneColumn;
+    @FXML
+    private TableColumn<Gallery, Double> ratingColumn;
+    @FXML
+    private TableColumn<Gallery, String> websiteColumn;
 
     private final GalleryService galleryService = ServiceProvider.getGalleryService();
 
     @FXML
     public void initialize() {
-        refreshList();
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        ownerNameColumn.setCellValueFactory(new PropertyValueFactory<>("ownerName"));
+        openingHoursColumn.setCellValueFactory(new PropertyValueFactory<>("openingHours"));
+        contactPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("contactPhone"));
+        ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        websiteColumn.setCellValueFactory(new PropertyValueFactory<>("website"));
 
-        galleryList.setCellFactory(lv -> new javafx.scene.control.ListCell<>() {
-            @Override
-            protected void updateItem(Gallery item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName() + " - " + item.getAddress() + " (" + item.getRating() + "/5.0)");
-                }
-            }
-        });
+        refreshTable();
     }
 
     @FXML
@@ -71,12 +83,12 @@ public class GalleryController {
         newGallery.setContactPhone(contactPhone);
         newGallery.setWebsite(website);
         galleryService.createGallery(newGallery);
-        refreshList();
+        refreshTable();
     }
 
     @FXML
     private void handleEditGallery() {
-        Gallery selected = galleryList.getSelectionModel().getSelectedItem();
+        Gallery selected = galleryTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
             UiDialogUtils.warn("Edit Gallery", "Please select a gallery to edit.");
             return;
@@ -116,12 +128,12 @@ public class GalleryController {
         updated.setExhibitions(selected.getExhibitions());
 
         galleryService.updateGallery(updated);
-        refreshList();
+        refreshTable();
     }
 
     @FXML
     private void handleDeleteGallery() {
-        Gallery selected = galleryList.getSelectionModel().getSelectedItem();
+        Gallery selected = galleryTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
             UiDialogUtils.warn("Delete Gallery", "Please select a gallery to delete.");
             return;
@@ -130,24 +142,22 @@ public class GalleryController {
             return;
         }
         galleryService.deleteGallery(selected.getId());
-        refreshList();
+        refreshTable();
     }
 
     @FXML
     private void handleSearch() {
         String query = searchField.getText();
-        galleryList.setItems(FXCollections.observableArrayList(galleryService.searchGalleries(query, null, null)));
-        galleryList.refresh();
+        galleryTable.setItems(FXCollections.observableArrayList(galleryService.searchGalleries(query, null, null)));
     }
 
     @FXML
     private void handleReset() {
         searchField.clear();
-        refreshList();
+        refreshTable();
     }
 
-    private void refreshList() {
-        galleryList.setItems(FXCollections.observableArrayList(galleryService.getAllGalleries()));
-        galleryList.refresh();
+    private void refreshTable() {
+        galleryTable.setItems(FXCollections.observableArrayList(galleryService.getAllGalleries()));
     }
 }

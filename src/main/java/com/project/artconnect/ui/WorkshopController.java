@@ -26,11 +26,19 @@ public class WorkshopController {
     @FXML
     private TableColumn<Workshop, LocalDateTime> dateColumn;
     @FXML
+    private TableColumn<Workshop, Integer> durationColumn;
+    @FXML
+    private TableColumn<Workshop, Integer> participantsColumn;
+    @FXML
     private TableColumn<Workshop, String> instructorColumn;
     @FXML
     private TableColumn<Workshop, Double> priceColumn;
     @FXML
+    private TableColumn<Workshop, String> locationColumn;
+    @FXML
     private TableColumn<Workshop, String> levelColumn;
+    @FXML
+    private TableColumn<Workshop, String> descriptionColumn;
 
     private final WorkshopService workshopService = ServiceProvider.getWorkshopService();
     private final ArtistService artistService = ServiceProvider.getArtistService();
@@ -39,8 +47,12 @@ public class WorkshopController {
     public void initialize() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        durationColumn.setCellValueFactory(new PropertyValueFactory<>("durationMinutes"));
+        participantsColumn.setCellValueFactory(new PropertyValueFactory<>("maxParticipants"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
         levelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         instructorColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getInstructor() != null ? cellData.getValue().getInstructor().getName()

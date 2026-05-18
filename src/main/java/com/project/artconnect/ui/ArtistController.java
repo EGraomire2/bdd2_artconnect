@@ -29,15 +29,31 @@ public class ArtistController {
     private TableColumn<Artist, String> emailColumn;
     @FXML
     private TableColumn<Artist, Integer> yearColumn;
+    @FXML
+    private TableColumn<Artist, String> phoneColumn;
+    @FXML
+    private TableColumn<Artist, String> websiteColumn;
+    @FXML
+    private TableColumn<Artist, String> socialMediaColumn;
+    @FXML
+    private TableColumn<Artist, String> activeColumn;
+    @FXML
+    private TableColumn<Artist, String> bioColumn;
 
     private final ArtistService artistService = ServiceProvider.getArtistService();
 
     @FXML
     public void initialize() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("contactEmail"));
-        yearColumn.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
+        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        websiteColumn.setCellValueFactory(new PropertyValueFactory<>("website"));
+        socialMediaColumn.setCellValueFactory(new PropertyValueFactory<>("socialMedia"));
+        activeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+            cellData.getValue().isActive() ? "Yes" : "No"));
+        bioColumn.setCellValueFactory(new PropertyValueFactory<>("bio"));
 
         disciplineFilter.setItems(FXCollections.observableArrayList(artistService.getAllDisciplines()));
         refreshTable();
@@ -97,8 +113,9 @@ public class ArtistController {
         if (bio == null) {
             return;
         }
+        Integer currentBirthYear = selected.getBirthYear();
         Integer birthYear = UiDialogUtils.promptInt("Edit Artist", "Enter artist birth year:",
-                selected.getBirthYear() != null ? selected.getBirthYear() : 0);
+            currentBirthYear != null ? currentBirthYear : 0);
         if (birthYear == null) {
             return;
         }

@@ -29,7 +29,13 @@ public class ExhibitionController {
     @FXML
     private TableColumn<Exhibition, LocalDate> dateColumn;
     @FXML
+    private TableColumn<Exhibition, LocalDate> endDateColumn;
+    @FXML
+    private TableColumn<Exhibition, String> curatorColumn;
+    @FXML
     private TableColumn<Exhibition, String> themeColumn;
+    @FXML
+    private TableColumn<Exhibition, String> descriptionColumn;
     @FXML
     private TableColumn<Exhibition, String> galleryColumn;
 
@@ -40,7 +46,10 @@ public class ExhibitionController {
     public void initialize() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        curatorColumn.setCellValueFactory(new PropertyValueFactory<>("curatorName"));
         themeColumn.setCellValueFactory(new PropertyValueFactory<>("theme"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         galleryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getGallery() != null ? cellData.getValue().getGallery().getName() : "Unknown"));
