@@ -17,167 +17,111 @@ This project is a skeleton designed for students to practice:
 - `com.project.artconnect.ui`: JavaFX Controllers and FXML views.
 - `com.project.artconnect.util`: Utility classes like `ConnectionManager` and `ServiceProvider`.
 
-## How to Run
-Requirement: Java 17+ and Maven installed.
+# ArtConnect — Documentation complète
+
+## Résumé
+ArtConnect est une application Java/JavaFX pour gérer une petite communauté artistique (artistes, œuvres, expositions, galeries, ateliers, membres). Ce README explique comment configurer la base de données MySQL, compiler et lancer l'application, et comment basculer des services en mémoire vers la persistance JDBC.
+
+## Fonctionnalités principales
+- Gestion d'artistes et d'œuvres
+- Planning d'expositions et gestion de galeries
+- Ateliers, réservations et avis
+- UI JavaFX (FXML) fournie pour démonstration
+- Architecture en couches : UI → Service → DAO → Persistence
+
+## Prérequis
+- Java 17 ou supérieur (JDK compatible JavaFX)
+- Maven 3.6+
+- MySQL 8.x (ou compatible with `mysql` CLI)
+
+## Fichiers importants
+- Code d'entrée : [src/main/java/com/project/artconnect/MainApp.java](src/main/java/com/project/artconnect/MainApp.java)
+- Configuration BD : [src/main/java/com/project/artconnect/config/DatabaseConfig.java](src/main/java/com/project/artconnect/config/DatabaseConfig.java)
+- Script de création utilisateurs / schéma : [src/main/java/com/project/artconnect/config/CreateRoot.sql](src/main/java/com/project/artconnect/config/CreateRoot.sql)
+- Scripts SQL supplémentaires : [ArtConnect.sql](ArtConnect.sql), [InitData.sql](InitData.sql), [Insertions_exemple.sql](Insertions_exemple.sql), [transaction.sql](transaction.sql)
+- DAO interfaces : [src/main/java/com/project/artconnect/dao](src/main/java/com/project/artconnect/dao)
+- Impl. JDBC : [src/main/java/com/project/artconnect/persistence](src/main/java/com/project/artconnect/persistence)
+- Vues FXML : [src/main/resources/com/project/artconnect/ui](src/main/resources/com/project/artconnect/ui)
+
+## Préparation de la base de données (MySQL)
+Les constantes par défaut de connexion se trouvent dans [src/main/java/com/project/artconnect/config/DatabaseConfig.java](src/main/java/com/project/artconnect/config/DatabaseConfig.java). Adaptez-les si vous utilisez d'autres identifiants.
+
+Exemples de commandes (depuis la racine du projet) :
+
+1) Créer l'utilisateur / schéma (si fourni) :
 
 ```bash
+mysql -u root -p < src/main/java/com/project/artconnect/config/CreateRoot.sql
+```
+
+2) Créer le schéma et tables (si vous préférez utiliser `ArtConnect.sql`) :
+
+```bash
+mysql -u root -p < ArtConnect.sql
+```
+
+3) Charger les données d'exemple :
+
+```bash
+mysql -u ArtconnectRoot -pArtConnect_2026_Secure artconnect < InitData.sql
+# ou
+mysql -u ArtconnectRoot -pArtConnect_2026_Secure artconnect < Insertions_exemple.sql
+```
+
+Remarques :
+- Les noms d'utilisateurs et mots de passe par défaut sont définis dans [src/main/java/com/project/artconnect/config/DatabaseConfig.java](src/main/java/com/project/artconnect/config/DatabaseConfig.java). Modifiez ces valeurs si vous changez les credentials.
+- Si vous utilisez un autre port ou hôte, mettez à jour `URL` dans `DatabaseConfig`.
+
+## Compilation et exécution
+
+1) Compiler et lancer via Maven (mode développement) :
+
+```bash
+# maven doit être installé
 mvn clean javafx:run
 ```
 
-The application runs "out-of-the-box" using **In-Memory Services** (`InMemoryArtistService`, etc.) located in `com.project.artconnect.service.impl`. This allows immediate demonstration of the UI with dummy data.
+2) Générer un JAR exécutable (selon configuration `pom.xml`) :
 
-## OOP-First Design (Object-Oriented Programming)
-Unlike typical database-centric skeletons, ArtConnect Pro follows strict OOP best practices:
-- **No Explicit IDs**: Model classes (`Artist`, `Artwork`, etc.) do **not** have `id` fields. In Java, an object's identity is its memory address/reference, not a numeric ID.
-- **Direct Object References**: Relationships are modeled using direct references. For example, an `Artwork` object holds a reference to an `Artist` object, not an `artistId`.
-- **Bidirectional Links**: Many relationships are bidirectional (e.g., an `Artist` has a `List<Artwork>`, and each `Artwork` points back to its `Artist`).
-- **No Junction Tables**: Many-to-Many relationships (like Exhibitions and Artworks) are modeled using simple collections (`List<Artwork>`) rather than separate junction classes.
-
-## Student Tasks (The Challenge)
-1. **ID Discovery**: Students must "discover" or create IDs at the database level. Your JDBC DAOs will need to map database IDs (Primary Keys) to Java object references during the `findAll` or `save` operations.
-2. **Relational Mapping**: You must implement the logic to reconstruct the object graph from relational tables. When fetching an `Artwork`, you must also fetch/link the corresponding `Artist`.
-3. **Database Setup**: Create the MySQL database and tables as per the technical requirements (including IDs and Foreign Keys that are NOT visible in the Java models).
-4. **JDBC Implementation**: Implement the `Jdbc` DAO classes in `com.project.artconnect.persistence`.
-5. **Service Swap**: Update `ServiceProvider` to use your new `Jdbc` DAOs.
-
-## Architecture Diagram
-```mermaid
-graph TD
-    UI[JavaFX Presentation Layer] --> Service[Service Layer]
-    Service --> DAO[DAO Interfaces]
-    DAO --> JDBC[JDBC Persistence Implementation]
-    DAO --> InMemory[InMemory Mock Implementation]
-    JDBC --> DB[(MySQL Database)]
+```bash
+mvn clean package
+# puis exécuter le JAR produit dans target/ si le pom génère un jar autonome
+java -jar target/artconnect-<version>.jar
 ```
 
-## Prototype de diagramme de classes
-```mermaid
-classDiagram
-    class Artist {
-        String name
-        String bio
-        Integer birthYear
-        String contactEmail
-        String phone
-        String city
-        String website
-        String socialMedia
-        boolean isActive
-        List~Discipline~ disciplines
-        List~Artwork~ artworks
-        +addArtwork(Artwork artwork)
-    }
+3) Lancer depuis un IDE (IntelliJ/VSCode) :
+- Importez le projet Maven, configurez la JVM (Java 17+), et lancez la classe `com.project.artconnect.MainApp`.
 
-    class Artwork {
-        String title
-        Integer creationYear
-        String type
-        String medium
-        String dimensions
-        String description
-        double price
-        Status status
-        Artist artist
-        List~ArtworkTag~ tags
-    }
+## Basculer des services en mémoire vers JDBC
+Par défaut, l'application contient des services en mémoire pour faciliter le prototypage. Pour utiliser la persistance réelle :
 
-    class CommunityMember {
-        String name
-        String email
-        Integer birthYear
-        String phone
-        String city
-        String membershipType
-        List~Discipline~ favoriteDisciplines
-        List~Booking~ bookings
-        List~Review~ reviews
-        +addBooking(Booking booking)
-    }
+1. Implémentez les DAO JDBC dans `src/main/java/com/project/artconnect/persistence` (ex. `JdbcArtistDao`, `JdbcArtworkDao`, ...).
+2. Vérifiez que les scripts SQL (schéma + données) ont été exécutés dans MySQL.
+3. Mettez à jour le fournisseur de services pour utiliser vos implémentations JDBC (classe `ServiceProvider` — recherchez `ServiceProvider` dans le projet) : remplacez les instances `InMemory...Service` par les services qui consomment vos `Jdbc...Dao`.
 
-    class Workshop {
-        String title
-        LocalDateTime date
-        int durationMinutes
-        int maxParticipants
-        double price
-        Artist instructor
-        String location
-        String description
-        String level
-    }
+## Structure recommandée et mapping BD
+- Les modèles Java sont orientés objet (références d'objets, sans exposer d'ID dans les POJOs). Vos DAO JDBC doivent mapper les clés primaires de la base aux objets Java et reconstruire le graphe d'objets (ex. associer `Artwork` à son `Artist`).
+- Implémentez des méthodes utilitaires de mappage (factories/constructors privés) dans les DAO pour centraliser cette logique.
 
-    class Booking {
-        Workshop workshop
-        CommunityMember member
-        LocalDateTime bookingDate
-        String paymentStatus
-    }
+## Bonnes pratiques
+- Ne modifiez `DatabaseConfig` qu'après avoir sécurisé vos credentials ou utilisé des variables d'environnement pour la production.
+- Testez chaque DAO avec un jeu de données minimal avant d'intégrer dans les services.
+- Gardez la couche UI découplée : UI ↔ Service (interfaces), Service ↔ DAO (interfaces). Cela facilite les tests et le remplacement d'implémentations.
 
-    class Review {
-        CommunityMember reviewer
-        Artwork artwork
-        int rating
-        String comment
-        LocalDate reviewDate
-    }
+## Débogage et validation
+- Utilisez les logs (ajoutez `System.out` ou un logger) dans vos DAO pour vérifier les requêtes SQL et les mappages.
+- Vérifiez les transactions si vous avez des opérations multi-étapes (voir `transaction.sql` pour exemples).
 
-    class Gallery {
-        String name
-        String address
-        String ownerName
-        String openingHours
-        String contactPhone
-        double rating
-        String website
-        List~Exhibition~ exhibitions
-        +addExhibition(Exhibition exhibition)
-    }
+## Contribution
+- Ouvrez une issue ou créez une PR si vous améliorez les scripts SQL, ajoutez des tests ou corrigez des DAO.
 
-    class Exhibition {
-        String title
-        LocalDate startDate
-        LocalDate endDate
-        String description
-        Gallery gallery
-        String curatorName
-        String theme
-        List~Artwork~ artworks
-    }
+## Ressources utiles
+- Voir la configuration JDBC : [src/main/java/com/project/artconnect/config/DatabaseConfig.java](src/main/java/com/project/artconnect/config/DatabaseConfig.java)
+- Scripts SQL : [ArtConnect.sql](ArtConnect.sql), [InitData.sql](InitData.sql), [Insertions_exemple.sql](Insertions_exemple.sql), [transaction.sql](transaction.sql)
 
-    class Discipline {
-        String name
-    }
+---
 
-    class ArtworkTag {
-        String name
-    }
-
-    class Status {
-        <<enumeration>>
-        FOR_SALE
-        SOLD
-        EXHIBITED
-    }
-
-    Artist "1" -- "0..*" Artwork : creates
-    Artist "1" o-- "0..*" Discipline : disciplines
-    Artwork "1" o-- "0..*" ArtworkTag : tags
-    Artwork --> Status : status
-    Workshop "0..*" --> "1" Artist : instructor
-    CommunityMember "1" o-- "0..*" Booking : bookings
-    CommunityMember "1" o-- "0..*" Review : reviews
-    CommunityMember "0..*" o-- "0..*" Discipline : favoriteDisciplines
-    Booking "1" --> "1" Workshop
-    Booking "1" --> "1" CommunityMember : member
-    Review "1" --> "1" Artwork
-    Review "1" --> "1" CommunityMember : reviewer
-    Gallery "1" o-- "0..*" Exhibition : exhibitions
-    Exhibition "1" o-- "0..*" Artwork : artworks
-    Exhibition "0..*" --> "1" Gallery : gallery
-```
-
-## Testing Instructions
-1. Launch the app and verify all 7 tabs show dummy data.
-2. Search for an artist by name or filter by discipline in the Artists Tab.
-3. View the "Discover" tab to see featured content dynamically generated.
-4. Once you implement JDBC, swap the `ServiceProvider` to use your `JdbcArtistDao` and verify data is fetched from MySQL.
+Si vous voulez, je peux :
+- Ajouter des exemples de commandes `mysql` plus sécurisées (utiliser `mysql_config_editor` ou variables d'environnement),
+- Ajouter une section « Tests unitaires » avec exemples de tests JUnit pour les DAO,
+- Générer un script d'installation automatisé (shell) pour la base.
