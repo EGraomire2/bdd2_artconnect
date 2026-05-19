@@ -11,7 +11,7 @@ GRANT ALL PRIVILEGES ON artconnect.* TO 'ArtconnectRoot'@'localhost';
 -- Créer l'utilisateur defaultuser avec accès lecture seule
 CREATE USER 'defaultuser'@'localhost' IDENTIFIED BY 'DefaultUser_2026';
 GRANT SELECT ON artconnect.* TO 'defaultuser'@'localhost';
-REVOKE ALL PRIVILEGES ON artconnect.community_members FROM 'defaultuser'@'localhost';
+REVOKE SELECT ON artconnect.community_members FROM 'defaultuser'@'localhost';
 
 -- Appliquer les changements
 FLUSH PRIVILEGES;
