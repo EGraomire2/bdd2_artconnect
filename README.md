@@ -1,22 +1,3 @@
-# ArtConnect Pro - Local Art Community Platform
-
-## Overview
-ArtConnect Pro is a JavaFX-based management system for local art communities. It allows managing artists, artworks, exhibitions, galleries, workshops, and community members.
-
-This project is a skeleton designed for students to practice:
-1. **Layered Architecture**: Presentation, Service, DAO, and Model layers.
-2. **Database Persistence**: Implementing JDBC DAOs to connect to a MySQL database.
-3. **JavaFX UI**: Working with FXML, TableViews, and Controllers.
-
-## Project Structure
-- `com.project.artconnect.MainApp`: Entry point.
-- `com.project.artconnect.model`: Domain entities (POJOs/Stubs).
-- `com.project.artconnect.dao`: Data Access Object interfaces.
-- `com.project.artconnect.persistence`: JDBC implementations (TODO: Students implement these).
-- `com.project.artconnect.service`: Business logic layer.
-- `com.project.artconnect.ui`: JavaFX Controllers and FXML views.
-- `com.project.artconnect.util`: Utility classes like `ConnectionManager` and `ServiceProvider`.
-
 # ArtConnect — Documentation complète
 
 ## Résumé
