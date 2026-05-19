@@ -92,6 +92,13 @@ java -jar target/artconnect-<version>.jar
 3) Lancer depuis un IDE (IntelliJ/VSCode) :
 - Importez le projet Maven, configurez la JVM (Java 17+), et lancez la classe `com.project.artconnect.MainApp`.
 
+## Utilisation du programme
+Voici les identifiants pour tester l'application:
+```
+Username: ArtconnectRoot
+Password: ArtConnect_2026_Secure
+```
+
 ## Basculer des services en mémoire vers JDBC
 Par défaut, l'application contient des services en mémoire pour faciliter le prototypage. Pour utiliser la persistance réelle :
 
