@@ -42,6 +42,12 @@ public class MainController {
     private Tab workshopsTab;
 
     @FXML
+    private Tab bookingsTab;
+
+    @FXML
+    private Tab reviewsTab;
+
+    @FXML
     private Tab communityTab;
 
     @FXML
@@ -68,6 +74,8 @@ public class MainController {
         protectedTabs.add(galleriesTab);
         protectedTabs.add(exhibitionsTab);
         protectedTabs.add(workshopsTab);
+        protectedTabs.add(bookingsTab);
+        protectedTabs.add(reviewsTab);
         protectedTabs.add(communityTab);
 
         ConnectionManager.resetToDefaultConnection();
