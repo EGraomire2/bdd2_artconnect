@@ -13,6 +13,9 @@
         <TextField fx:id="searchField" promptText="Search reviews" HBox.hgrow="ALWAYS" />
         <Button text="Search" onAction="#handleSearch" />
         <Button text="Reset" onAction="#handleReset" />
+        <Button text="Add" onAction="#handleAddReview" />
+        <Button text="Edit" onAction="#handleEditReview" />
+        <Button text="Delete" onAction="#handleDeleteReview" />
     </HBox>
 
     <TableView fx:id="reviewTable" VBox.vgrow="ALWAYS">
@@ -26,9 +29,4 @@
         </columns>
     </TableView>
 
-    <HBox spacing="10.0" alignment="CENTER_LEFT">
-        <Button text="Add" onAction="#handleAddReview" />
-        <Button text="Edit" onAction="#handleEditReview" />
-        <Button text="Delete" onAction="#handleDeleteReview" />
-    </HBox>
 </VBox>

@@ -26,10 +26,13 @@ public class Artwork {
     public Artwork() {
     }
 
-    public Artwork(String title, Integer creationYear, String type, double price, Artist artist) {
+    public Artwork(String title, Integer creationYear, String type, String medium, String dimensions, String description, double price, Artist artist) {
         this.title = title;
         this.creationYear = creationYear;
         this.type = type;
+        this.medium = medium;
+        this.dimensions = dimensions;
+        this.description = description;
         this.price = price;
         this.artist = artist;
         this.status = Status.FOR_SALE;

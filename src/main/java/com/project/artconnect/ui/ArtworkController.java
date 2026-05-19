@@ -83,13 +83,24 @@ public class ArtworkController {
         if (artistName == null) {
             return;
         }
-
+        String medium = UiDialogUtils.promptText("Add Artwork", "Enter artwork medium:", "");
+        if (medium == null) {
+            return;
+        }
+        String dimensions = UiDialogUtils.promptText("Add Artwork", "Enter artwork dimensions:", "");
+        if (dimensions == null) {
+            return;
+        }
+        String description = UiDialogUtils.promptText("Add Artwork", "Enter artwork description:", "");
+        if (description == null) {
+            return;
+        }
         Artist artist = resolveArtist(artistName);
         if (artist == null) {
             return;
         }
 
-        Artwork newArtwork = new Artwork(title, creationYear, type, price, artist);
+        Artwork newArtwork = new Artwork(title, creationYear, type, medium, dimensions, description, price, artist);
         artworkService.createArtwork(newArtwork);
         refreshTable();
     }
@@ -133,11 +144,8 @@ public class ArtworkController {
             return;
         }
 
-        Artwork updated = new Artwork(selected.getTitle(), creationYear, type, price, selected.getArtist());
+        Artwork updated = new Artwork(selected.getTitle(), creationYear, type, medium, dimensions, description, price, selected.getArtist());
         updated.setId(selected.getId());
-        updated.setMedium(medium);
-        updated.setDimensions(dimensions);
-        updated.setDescription(description);
         updated.setStatus(parseStatus(statusValue, selected.getStatus()));
         updated.setTags(selected.getTags());
 
